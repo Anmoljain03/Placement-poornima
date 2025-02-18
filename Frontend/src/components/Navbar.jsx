@@ -19,7 +19,7 @@ const Navbar = () => {
             <Link 
               to="/" 
               className={`px-4 py-2 rounded-lg ${
-                location.pathname === "/" ? "bg-gray-200 text-gray-900 font-semibold" : "text-gray-600 hover:text-gray-900"
+                location.pathname === "/" ? "bg-[#1A365D] text-white font-semibold" : "text-gray-600 hover:text-gray-900"
               }`}
             >
               Home
@@ -30,7 +30,7 @@ const Navbar = () => {
             <Link 
               to="/jobs" 
               className={`px-4 py-2 rounded-lg ${
-                location.pathname === "/jobs" ? "bg-gray-200 text-gray-900 font-semibold" : "text-gray-600 hover:text-gray-900"
+                location.pathname === "/jobs" ? "bg-[#1A365D] text-white font-semibold" : "text-gray-600 hover:text-gray-900"
               }`}
             >
               Jobs
@@ -40,7 +40,7 @@ const Navbar = () => {
             <Link 
               to="/statistics" 
               className={`px-4 py-2 rounded-lg ${
-                location.pathname === "/statistics" ? "bg-gray-200 text-gray-900 font-semibold" : "text-gray-600 hover:text-gray-900"
+                location.pathname === "/statistics" ? "bg-[#1A365D] text-white font-semibold" : "text-gray-600 hover:text-gray-900"
               }`}
             >
               Statistics
@@ -50,7 +50,7 @@ const Navbar = () => {
             <Link 
               to="/profile" 
               className={`px-4 py-2 rounded-lg ${
-                location.pathname === "/profile" ? "bg-gray-200 text-gray-900 font-semibold" : "text-gray-600 hover:text-gray-900"
+                location.pathname === "/profile" ? "bg-[#1A365D] text-white font-semibold" : "text-gray-600 hover:text-gray-900"
               }`}
             >
               Profile
