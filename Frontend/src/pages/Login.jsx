@@ -2,7 +2,7 @@ import React from 'react'
 
 const Login = () => {
   return (
-    <div>anmol</div>
+    <div>out</div>
   )
 }
 
