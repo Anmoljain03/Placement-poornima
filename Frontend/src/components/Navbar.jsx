@@ -4,10 +4,9 @@ import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const location = useLocation(); 
-
   return (
     <nav className="bg-white shadow-md p-4">
-      <div className="container mx-auto flex justify-between items-center">
+      <div className="mx-auto flex justify-between items-center">
         {/* Logo Section */}
         <a href="#" className="flex items-center space-x-2 text-primary font-semibold text-lg px-9">
         <RiGraduationCapLine size={26}/>
@@ -73,3 +72,19 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+<section className="space-y-6">
+<h2 className="text-2xl font-bold text-center text-primary">
+  Featured Companies
+</h2>
+<div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+  {[1, 2, 3, 4].map((i) => (
+    <div
+      key={i}
+      className="aspect-video bg-white rounded-lg shadow-sm p-4 flex items-center justify-center"
+    >
+      <div className="text-gray-400">Company Logo</div>
+    </div>
+  ))}
+</div>
+</section>
