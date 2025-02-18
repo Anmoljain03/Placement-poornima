@@ -2,8 +2,8 @@ import React from 'react';
 
 const Home = () => {
   return (
-    <div className="anmol">
-    
+    <div className="">
+    <h1 className='bg-slate-300'>Mahima</h1>
     </div>
   );
 };
