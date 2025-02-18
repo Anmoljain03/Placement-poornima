@@ -3,11 +3,8 @@ import React from 'react';
 const Home = () => {
   return (
     <div className="">
-    <h1 className='bg-slate-300'>Mahima</h1>
     </div>
   );
 };
 
 export default Home;
-
-
