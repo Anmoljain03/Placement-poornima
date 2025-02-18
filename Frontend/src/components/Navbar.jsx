@@ -10,7 +10,7 @@ const Navbar = () => {
         {/* Logo Section */}
         <a href="#" className="flex items-center space-x-2 text-[#1A365D] hover:text-[#46648f]  font-semibold text-lg ">
         <RiGraduationCapLine size={26}/>
-          <span>Poornima Placement</span>
+          <span>Poornima Placemet</span>
         </a>
 
         <ul className="hidden md:flex space-x-2">
