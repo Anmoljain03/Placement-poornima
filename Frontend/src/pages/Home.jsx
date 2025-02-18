@@ -32,7 +32,7 @@ const Home = () => {
   
   return (
     <div>
-      <section className="text-center space-y-8 py-12 px-10 bg-[#F8F9FA] mt-12">
+      <section className="text-center space-y-8 py-12 px-10 bg-[#F8F9FA] mt-14">
         <h1 className="text-4xl md:text-5xl font-bold text-[#1A365D] animate-float">
           Welcome to Poornima Placements
         </h1>
@@ -42,11 +42,9 @@ const Home = () => {
         </p>
         <div className="flex justify-center gap-4">
           <button className='bg-[#1A365D] text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#284B63] transition duration-300'> {/* Improved button styling */}
-            Browse Jobs
-          </button>
-          <button className='bg-white text-[#1A365D] font-semibold px-6 py-3 rounded-lg border border-[#1A365D] hover:bg-[#E9ECEF] transition duration-300'> {/* Improved button styling */}
             Register Now
           </button>
+        
         </div>
       </section>
 
