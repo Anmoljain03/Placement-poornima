@@ -6,19 +6,19 @@ const Navbar = () => {
   const location = useLocation(); 
 
   return (
-    <nav className="bg-white shadow-md p-4">
-      <div className="container mx-auto flex justify-between items-center">
+    <nav className="bg-white shadow-md p-4 ">
+      <div className="flex justify-between items-center w-full px-1">
         {/* Logo Section */}
-        <a href="#" className="flex items-center space-x-2 text-primary font-semibold text-lg px-9">
+        <a href="#" className="flex items-center space-x-2 text-[#1A365D] hover:text-[#46648f]  font-semibold text-lg ">
         <RiGraduationCapLine size={26}/>
           <span>Poornima Placement</span>
         </a>
 
-        <ul className="hidden md:flex space-x-6">
+        <ul className="hidden md:flex space-x-2">
           <li>
             <Link 
               to="/" 
-              className={`px-4 py-2 rounded-lg ${
+              className={`px-4 py-2 rounded-lg text-sm font-semibold ${
                 location.pathname === "/" ? "bg-[#1A365D] text-white font-semibold" : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -29,7 +29,7 @@ const Navbar = () => {
           <li>
             <Link 
               to="/jobs" 
-              className={`px-4 py-2 rounded-lg ${
+              className={`px-4 py-2 rounded-lg text-sm font-semibold ${
                 location.pathname === "/jobs" ? "bg-[#1A365D] text-white font-semibold" : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -39,7 +39,7 @@ const Navbar = () => {
           <li>
             <Link 
               to="/statistics" 
-              className={`px-4 py-2 rounded-lg ${
+              className={`px-4 py-2 rounded-lg text-sm font-semibold ${
                 location.pathname === "/statistics" ? "bg-[#1A365D] text-white font-semibold" : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -49,7 +49,7 @@ const Navbar = () => {
           <li>
             <Link 
               to="/profile" 
-              className={`px-4 py-2 rounded-lg ${
+              className={`px-3 py-2 rounded-lg text-sm font-semibold ${
                 location.pathname === "/profile" ? "bg-[#1A365D] text-white font-semibold" : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -59,8 +59,8 @@ const Navbar = () => {
           <li>
             <Link 
               to="/login" 
-              className={`px-6 py-2 rounded-lg ${
-                location.pathname === "/login" ? "bg-gray-900 text-white" : "bg-gray-800 text-white hover:bg-gray-900"
+              className={`px-4 py-2 rounded-lg text-sm font-semibold ${
+                location.pathname === "/login" ? "bg-[#1A365D] text-white" : "bg-[#1A365D] text-white hover:bg-gray-900"
               }`}
             >
               Login
