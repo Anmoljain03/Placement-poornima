@@ -8,7 +8,7 @@ const Navbar = () => {
     <nav className="bg-white shadow-md p-4">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo Section */}
-        <a href="#" className="flex items-center space-x-2 text-[#1A365D] hover:text-[#46648f]  font-semibold text-lg ">
+        <a href="#" className="flex items-center space-x-2 text-[#1A365D] hover:text-[#496c9c]  font-semibold text-lg ">
         <RiGraduationCapLine size={26}/>
           <span>Poornima Placement</span>
         </a>
