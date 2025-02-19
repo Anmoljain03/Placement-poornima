@@ -4,11 +4,9 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const morgan = require("morgan");
 
-
 dotenv.config();
 
 const app = express();
-
 
 app.use(express.json());
 app.use(cors());
@@ -23,7 +21,9 @@ const connectDB = async () => {
         if (!process.env.MONGO_URI) {
             throw new Error("MONGO_URI is not defined in .env file!");
         }
+
         await mongoose.connect(process.env.MONGO_URI);
+        
         console.log("MongoDB Connected Successfully");
     } catch (error) {
         console.error("MongoDB Connection Error:", error.message);
