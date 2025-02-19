@@ -40,7 +40,6 @@ router.post("/register", async (req, res) => {
 
         await newUser.save();
 
-        // ✅ Send Confirmation Email
         const mailOptions = {
             from: "your-email@gmail.com",
             to: email,
