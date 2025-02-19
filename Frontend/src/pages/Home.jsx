@@ -41,7 +41,7 @@ const Home = () => {
           the first step towards your dream career.
         </p>
         <div className="flex justify-center gap-4">
-          <button className='bg-[#1A365D] text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#284B63] transition duration-300'> {/* Improved button styling */}
+          <button className='bg-[#1A365D] text-white font-semibold px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-300'>
             Register Now
           </button>
         
@@ -65,16 +65,21 @@ const Home = () => {
 
     <div className="w-1/3 flex items-center pl-10 bg-white rounded-lg px-70 p border-2 py-5 m-8 hover:shadow-lg transition duration-300">
     <TbUsers  size={30} className="mr-4 bg-gray-200 p-0.5 px-0.9 rounded-lg text-[#1A365D]" />
+    <div className='hover:shadow-lg transition duration-300'>
       <span className="text-2xl font-bold text-[#1A365D] block">1000+</span>
       <p className="text-md text-gray-600">Placed Students</p>
+      </div>
     </div>
 
     {/* Stat 3 */}
     <div className="w-1/3 flex items-center pl-10 bg-white rounded-lg px-70 p border-2 py-5 m-8 hover:shadow-lg transition duration-300">
     <IoMdTrendingUp size={30} className="mr-4 bg-gray-200 p-1 rounded-lg text-[#1A365D]"  />
+    <div className='hover:shadow-lg transition duration-300'>
       <span className="text-2xl font-bold text-[#1A365D] block">92%</span>
       <p className="text-md text-gray-600">Placement Rate</p>
-    </div>
+      </div>
+    </div> 
+
 
   </div>
 </section>
