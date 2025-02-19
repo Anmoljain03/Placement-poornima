@@ -1,10 +1,13 @@
 import React from 'react';
 import { TbUsers } from "react-icons/tb";
 import { IoMdTrendingUp } from "react-icons/io";
+import { useNavigate } from 'react-router-dom';
 
 import { LuBriefcase } from "react-icons/lu";
 
 const Home = () => {
+
+  const navigate = useNavigate();
 
   const teamMembers = [
     {
@@ -41,7 +44,7 @@ const Home = () => {
           the first step towards your dream career.
         </p>
         <div className="flex justify-center gap-4">
-          <button className='bg-[#1A365D] text-white font-semibold px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-300'>
+          <button onClick={() => navigate("/register")} className='bg-[#1A365D] text-white font-semibold px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-300'>
             Register Now
           </button>
         
