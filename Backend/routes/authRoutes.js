@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 
 router.post("/register", async (req, res) => {
     try {
-        console.log("Incoming Request Data:", req.body);
+        // console.log("Incoming Request Data:", req.body);
 
         const { name, email, pwd, dept, regno } = req.body;
 
