@@ -17,7 +17,8 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
     setAuthState(false);
     setIsAuth(false);
     navigate("/");
-  };
+    alert("Logged out successfully");
+  }
 
   return (
     <nav className="bg-white shadow-md p-4">
@@ -47,7 +48,7 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
                 location.pathname === "/jobs" ? "bg-[#1A365D] text-white font-semibold" : "text-gray-600 hover:text-gray-900"
               }`}
             >
-              {isAuth ? "Browse Jobs" : "Jobs"}
+              {isAuth ? "Jobs" : "Jobs"}
             </Link>
           </li>
 
@@ -82,7 +83,7 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
             <li>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 rounded-lg text-sm font-semibold bg-red-600 text-white hover:bg-red-800"
+                className="px-4 py-2 rounded-lg text-sm mb-6 font-semibold bg-red-600 text-white hover:bg-red-800"
               >
                 Logout
               </button>
