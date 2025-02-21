@@ -37,54 +37,60 @@ const Login = ({ setAuthState }) => {
     
 
     return (
-        <div className="flex justify-center items-center w-96 p-12 m-auto rounded-lg mt-20 bg-[#213A55]">
-            <form onSubmit={handleSubmit} className="w-full">
-                <h2 className="text-gray-300 mb-4 text-3xl font-mono font-bold text-center">Login</h2>
-
-                <div className="mb-3">
-                    <label className="text-gray-300 font-semibold block">Email</label>
-                    <input
-                        className="rounded-sm w-full p-2 text-black"
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-
-                <div className="mb-3">
-                    <label className="text-gray-300 font-semibold block">Password</label>
-                    <input
-                        className="rounded-sm w-full p-2 text-black"
-                        type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-
-                <div className="mb-3">
-                    <label className="text-gray-300 font-semibold block">Registration Number</label>
-                    <input
-                        className="rounded-sm w-full p-2 text-black"
-                        type="text"
-                        name="registrationNumber"
-                        value={formData.registrationNumber}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-
-                <button
-                    className="text-neutral-800 p-2 hover:bg-[#b8c9e0] rounded-md mt-5 font-semibold text-2xl bg-[#e0e1dd] w-full"
-                    type="submit"
-                >
-                    Login
-                </button>
-            </form>
-        </div>
+        
+        <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-[#36417c] to-[#d33b69] p-6">
+      <div className="w-full max-w-md bg-[#0A1734] p-8 rounded-2xl shadow-lg border border-[#d33b69]">
+        <h2 className="text-[#d33b69] text-4xl font-bold text-center mb-6 font-mono">Login</h2>
+        
+        <form onSubmit={handleSubmit} className="w-full">
+          <div className="mb-4">
+            <label className="text-gray-300 font-semibold block mb-1">Email</label>
+            <input
+              className="w-full p-3 rounded-md bg-[#132F5E] text-white placeholder-gray-400 focus:ring-2 focus:ring-[#d33b69] outline-none transition-all duration-300 hover:bg-[#1E3A8A]"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+          
+          <div className="mb-4">
+            <label className="text-gray-300 font-semibold block mb-1">Password</label>
+            <input
+              className="w-full p-3 rounded-md bg-[#132F5E] text-white placeholder-gray-400 focus:ring-2 focus:ring-[#d33b69] outline-none transition-all duration-300 hover:bg-[#1E3A8A]"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+          
+          <div className="mb-4">
+            <label className="text-gray-300 font-semibold block mb-1">Registration Number</label>
+            <input
+              className="w-full p-3 rounded-md bg-[#132F5E] text-white placeholder-gray-400 focus:ring-2 focus:ring-[#d33b69] outline-none transition-all duration-300 hover:bg-[#1E3A8A]"
+              type="text"
+              name="registrationNumber"
+              value={formData.registrationNumber}
+              onChange={handleChange}
+              placeholder="Enter your registration number"
+              required
+            />
+          </div>
+          
+          <button
+            className="w-full bg-[#d33b69] text-white p-3 font-sans rounded-md text-lg font-bold hover:bg-[#ff3366] transition-all duration-300 shadow-md transform hover:scale-105"
+            type="submit"
+          >
+            Login
+          </button>
+        </form>
+      </div>
+    </div>
     );
 };
 
