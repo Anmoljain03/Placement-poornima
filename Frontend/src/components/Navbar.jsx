@@ -17,6 +17,7 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
     setAuthState(false);
     setIsAuth(false);
     navigate("/");
+    alert("Logged out successfully");
   };
 
   return (
@@ -47,7 +48,7 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
                 location.pathname === "/jobs" ? "bg-[#1A365D] text-white font-semibold" : "text-gray-600 hover:text-gray-900"
               }`}
             >
-              {isAuth ? "Browse Jobs" : "Jobs"}
+              {isAuth ? "Jobs" : "Jobs"}
             </Link>
           </li>
 
