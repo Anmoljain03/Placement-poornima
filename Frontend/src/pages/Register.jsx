@@ -6,7 +6,7 @@ import { FaArrowRight } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import bgImage from "../assets/bg.png";
 
-const Register = ({ setAuthState }) => {
+const Register = ( { setAuthState}) => {
   const navigate = useNavigate();
 
   // ✅ Validation Sch00ema using Yup//
@@ -34,6 +34,7 @@ const Register = ({ setAuthState }) => {
       localStorage.setItem("auth", JSON.stringify({ isAuthenticated: true }));
   
       setAuthState(true);
+
       console.log("Registration Successful:", response.data);
       alert("Registration Successful");
       navigate("/");
@@ -45,18 +46,18 @@ const Register = ({ setAuthState }) => {
   };
 
   return (
-    <div className="flex h-screen ml-8 mr-8 mt-6 mb-0">
+    <div className="flex h-screen ml-20 mr-8 mt- mb-0">
       {/* Left Side Image Section */}
-      <div className="w-2/3 relative hidden lg:flex items-center justify-center">
+      <div className="w-1/2  relative hidden lg:flex items-center justify-center">
         <div
-          className="absolute inset-0 bg-cover bg-center mb-8 mt-2 "
+          className="absolute inset-0 bg-contain bg-center bg-no-repeat mb-8 mt-4 "
           style={{ backgroundImage: `url(${bgImage})` }}
         ></div>
       </div>
 
       {/* Right Side Form Section */}
-      <div className="flex justify-center items-center w-auto min-h-screen pl-12 pb-8 bg-white">
-        <div className="p-10  bg-white rounded-lg w-[400px]">
+      <div className="flex justify-center items-center w-auto mt-4 pl-12 pb-8 bg-white">
+        <div className="w-full max-w-md bg-[#0A1734] p-8 rounded-2xl shadow-lg border border-[#d33b69]">
           <h2 className="text-black mb-6  text-3xl font-sans font-bold text-center">Create Account</h2>
 
           <Formik
@@ -77,7 +78,7 @@ const Register = ({ setAuthState }) => {
                   Full Name
                 </label>
                 <Field
-                  className="w-full border-b-2 border-gray-100 focus:border-purple-600 focus:outline-none p-0 mt-1 mb-3"
+                  className="w-full p-3 rounded-md bg-gray-300 text-white placeholder-gray-400 focus:ring-2 focus:ring-[#d33b69] outline-none transition-all duration-300 hover:bg-[#1E3A8A]"
                   placeholder="Name.."
                   type="text"
                   name="name"
@@ -117,7 +118,7 @@ const Register = ({ setAuthState }) => {
                   className="w-full border-b-2 border-gray-100 focus:border-purple-600 focus:outline-none p-0 mt-1 mb-3"
                   name="department"
                 >
-                  <option value="">Select Department</option>
+                  <option value=""></option>
                   <option value="CSE">Computer Science</option>
                   <option value="ECE">Electronics & Communication</option>
                   <option value="ME">Mechanical Engineering</option>
