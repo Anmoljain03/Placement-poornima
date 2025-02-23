@@ -19,6 +19,8 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
     navigate("/");
     alert("Logged out successfully");
   };
+    alert("Logged out successfully");
+  }
 
   return (
     <nav className="bg-white shadow-md p-4">
@@ -83,7 +85,7 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
             <li>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 rounded-lg text-sm font-semibold bg-red-600 text-white hover:bg-red-800"
+                className="px-4 py-2 rounded-lg text-sm mb-6 font-semibold bg-red-600 text-white hover:bg-red-800"
               >
                 Logout
               </button>
