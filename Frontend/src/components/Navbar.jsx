@@ -26,7 +26,7 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
         {/* Logo Section */}
         <a href="#" className="flex items-center space-x-2 text-[#1A365D] hover:text-[#496c9c] font-semibold text-lg">
           <RiGraduationCapLine size={26} />
-          <span>Poornima Placement</span>
+          <span onClick={() => navigate("/")}>Poornima Placement</span>
         </a>
 
         <ul className="hidden md:flex space-x-2">

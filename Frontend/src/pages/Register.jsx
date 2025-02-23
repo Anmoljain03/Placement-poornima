@@ -6,10 +6,10 @@ import { FaArrowRight } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import bgImage from "../assets/bg.png";
 
-const Register = () => {
+const Register = ({ setAuthState }) => {
   const navigate = useNavigate();
 
-  // ✅ Validation Schema using Yup
+  // ✅ Validation Sch00ema using Yup//
   const validationSchema = Yup.object({
     name: Yup.string().required("Full Name is required"),
     email: Yup.string()
@@ -30,8 +30,13 @@ const Register = () => {
     console.log("Submitting Form Data:", values);
     try {
       const response = await axios.post("http://localhost:5000/api/auth/register", values);
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("auth", JSON.stringify({ isAuthenticated: true }));
+  
+      setAuthState(true);
       console.log("Registration Successful:", response.data);
       alert("Registration Successful");
+      navigate("/");
     } catch (error) {
       console.error("Registration Failed:", error.response?.data || error.message);
       alert(error.response?.data?.message || "Registration Failed");
