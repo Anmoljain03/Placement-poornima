@@ -1,0 +1,52 @@
+const nodemailer = require("nodemailer");
+
+
+
+
+// const transporter = nodemailer.createTransport({
+//     service: "gmail",
+//     auth: {
+//         user: "honeyjain245@gmail.com",
+//         pass: "wsda wwsk kjlq wucc" 
+//     }
+// });
+
+
+ const mailOptions = {
+            from: "your-email@gmail.com",
+            to: email,
+            subject: "Welcome to Poornima Placement Portal – Your Career Starts Here",
+            text:  `Dear ${name}
+
+Congratulations! You have successfully created an account on the Poornima Placement Portal. This platform is designed to connect you with top recruiters, exclusive job opportunities, and career resources to help you achieve your professional goals.  
+
+Here’s what you can do next:  
+✅ Complete your profile to increase visibility among recruiters.  
+✅ Explore available job openings and internship opportunities.  
+✅ Stay updated with upcoming placement drives and career workshops.  
+ 
+
+For any queries or assistance, feel free to reach out to the Placement Cell at tpo@poornima.edu.in or visit our office.  
+
+Wishing you all the best in your job search!  
+
+Best Regards,  
+Poornima Placement Cell
+Poornima University`
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error("Email Send Error:", error);
+            } else {
+                console.log("Email sent:", info.response);
+            }
+        });
+
+        res.status(201).json({ message: "User registered successfully. Confirmation email sent!" });
+
+    } catch (error) {
+        console.error("Registration Error:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});

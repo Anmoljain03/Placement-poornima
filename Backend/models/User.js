@@ -7,5 +7,5 @@ const UserSchema = new mongoose.Schema({
     department: { type: String, required: true }, 
     registrationNumber: { type: String, required: true, unique: true } 
 });
-
+   
 module.exports = mongoose.model("User", UserSchema);
