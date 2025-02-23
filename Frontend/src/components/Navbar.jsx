@@ -19,8 +19,6 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
     navigate("/");
     alert("Logged out successfully");
   };
-    alert("Logged out successfully");
-  }
 
   return (
     <nav className="bg-white shadow-md p-4">
@@ -50,7 +48,7 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
                 location.pathname === "/jobs" ? "bg-[#1A365D] text-white font-semibold" : "text-gray-600 hover:text-gray-900"
               }`}
             >
-              {isAuth ? "Jobs" : "Jobs"}
+              Jobs
             </Link>
           </li>
 
