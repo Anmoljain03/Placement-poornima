@@ -18,6 +18,8 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
     setIsAuth(false);
     navigate("/");
     alert("Logged out successfully");
+  };
+    alert("Logged out successfully");
   }
 
   return (
