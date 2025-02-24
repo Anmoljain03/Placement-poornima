@@ -35,8 +35,6 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
           onClick={() => navigate("/")}
         >
           <RiGraduationCapLine size={26} />
-          <span onClick={() => navigate("/")}>Poornima Placement</span>
-        </a>
           <span>Poornima Placement</span>
         </div>
 
