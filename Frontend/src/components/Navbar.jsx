@@ -20,57 +20,50 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
     alert("Logged out successfully");
   };
 
+  const navItems = [
+    { path: "/", label: "Home" },
+    { path: "/jobs", label: "Jobs" },
+    { path: "/statistics", label: "Statistics" },
+  ];
+
   return (
     <nav className="bg-white shadow-md p-4">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo Section */}
-        <a href="#" className="flex items-center space-x-2 text-[#1A365D] hover:text-[#496c9c] font-semibold text-lg">
+        <div
+          className="flex items-center space-x-2 text-[#1A365D] hover:text-[#496c9c] font-semibold text-lg cursor-pointer"
+          onClick={() => navigate("/")}
+        >
           <RiGraduationCapLine size={26} />
-          <span onClick={() => navigate("/")}>Poornima Placement</span>
-        </a>
+          <span>Poornima Placement</span>
+        </div>
 
+        {/* Navigation Links */}
         <ul className="hidden md:flex space-x-2">
-          <li>
-            <Link
-              to="/"
-              className={`px-4 py-2 rounded-lg text-sm font-semibold ${
-                location.pathname === "/" ? "bg-[#1A365D] text-white font-semibold" : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              Home
-            </Link>
-          </li>
+          {navItems.map((item) => (
+            <li key={item.path}>
+              <Link
+                to={item.path}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition duration-300 ${
+                  location.pathname === item.path
+                    ? "bg-[#1A365D] text-white"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
 
-          <li>
-            <Link
-              to="/jobs"
-              className={`px-4 py-2 rounded-lg text-sm font-semibold ${
-                location.pathname === "/jobs" ? "bg-[#1A365D] text-white font-semibold" : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              Jobs
-            </Link>
-          </li>
-
-          {/* Always Show Statistics */}
-          <li>
-            <Link
-              to="/statistics"
-              className={`px-4 py-2 rounded-lg text-sm font-semibold ${
-                location.pathname === "/statistics" ? "bg-[#1A365D] text-white font-semibold" : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              Statistics
-            </Link>
-          </li>
-
-          {/* Show Profile when authenticated */}
+          {/* Profile Link (Only when authenticated) */}
           {isAuth && (
             <li>
               <Link
                 to="/profile"
-                className={`px-4 py-2 rounded-lg text-sm font-semibold ${
-                  location.pathname === "/profile" ? "bg-[#1A365D] text-white font-semibold" : "text-gray-600 hover:text-gray-900"
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition duration-300 ${
+                  location.pathname === "/profile"
+                    ? "bg-[#1A365D] text-white"
+                    : "text-gray-600 hover:text-gray-900"
                 }`}
               >
                 Profile
@@ -78,26 +71,24 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
             </li>
           )}
 
-          {/* Show Login or Logout based on authentication state */}
-          {isAuth ? (
-            <li>
+          {/* Login/Logout Button */}
+          <li>
+            {isAuth ? (
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 rounded-lg text-sm mb-6 font-semibold bg-red-600 text-white hover:bg-red-800"
+                className="px-4 py-2 rounded-lg text-sm font-semibold bg-red-600 text-white hover:bg-red-800 transition duration-300"
               >
                 Logout
               </button>
-            </li>
-          ) : (
-            <li>
+            ) : (
               <Link
                 to="/login"
-                className="px-4 py-2 rounded-lg text-sm font-semibold bg-[#1A365D] text-white hover:bg-gray-900"
+                className="px-4 py-2 rounded-lg text-sm font-semibold bg-[#1A365D] text-white hover:bg-gray-900 transition duration-300"
               >
                 Login
               </Link>
-            </li>
-          )}
+            )}
+          </li>
         </ul>
       </div>
     </nav>
