@@ -19,8 +19,6 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
     navigate("/");
     alert("Logged out successfully");
   };
-    alert("Logged out successfully");
-  }
 
   return (
     <nav className="bg-white shadow-md p-4">
@@ -28,7 +26,7 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
         {/* Logo Section */}
         <a href="#" className="flex items-center space-x-2 text-[#1A365D] hover:text-[#496c9c] font-semibold text-lg">
           <RiGraduationCapLine size={26} />
-          <span>Poornima Placement</span>
+          <span onClick={() => navigate("/")}>Poornima Placement</span>
         </a>
 
         <ul className="hidden md:flex space-x-2">
@@ -50,7 +48,7 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
                 location.pathname === "/jobs" ? "bg-[#1A365D] text-white font-semibold" : "text-gray-600 hover:text-gray-900"
               }`}
             >
-              {isAuth ? "Jobs" : "Jobs"}
+              Jobs
             </Link>
           </li>
 

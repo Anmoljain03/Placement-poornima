@@ -34,7 +34,7 @@ const Home = () => {
   
   return (
     <div>
-      <section className="text-center space-y-8 py-12 px-10 bg-[#F8F9FA] mt-14">
+      <section className="text-center space-y-8 py-12 px-10 bg-[#f8f9fa]">
         <h1 className="text-4xl md:text-5xl font-bold text-[#1A365D] animate-float">
           Welcome to Poornima Placements
         </h1>
