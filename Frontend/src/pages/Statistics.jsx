@@ -6,7 +6,7 @@ const Statistics = () => {
       {/* Wider container for proper spacing */}
       <div className="max-w-[1400px] mx-auto text-center px-8 lg:px-0">
         {/* Title Section */}
-        <h2 className="text-3xl font-bold text-[#1A365D]">
+        <h2 className="text-3xl font-bold text-gray-900">
           Placement Statistics 2023-24
         </h2>
         <p className="text-lg text-gray-600 mt-1">

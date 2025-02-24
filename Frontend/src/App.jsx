@@ -8,10 +8,12 @@ import Statistics from "./pages/Statistics";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Footer from "./components/Footer";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
+
 
   useEffect(() => {
     const authData = JSON.parse(localStorage.getItem("auth"));
@@ -40,6 +42,7 @@ const App = () => {
         <Route path="/login" element={<Login setAuthState={handleAuthChange} />} />
         <Route path="/register" element={<Register setAuthState={handleAuthChange} />} />
       </Routes>
+      <Footer />
     </>
   );
 };

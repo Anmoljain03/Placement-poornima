@@ -57,7 +57,7 @@ const Home = () => {
       <section className="bg-[#F8F9FA] py-12 px-10 mt-22">
         <div className="container mx-auto flex">
           {/* Stat 1 */}
-          <div className="w-1/3 flex items-center pl-10 bg-white rounded-lg px-40 p border-2 py-5 m-8">
+          <div className="w-1/3 flex items-center pl-10 bg-white rounded-lg px-40 p border-2 py-5 m-8 hover:shadow-lg transition duration-300">
             <LuBriefcase size={30} className="mr-4 bg-gray-200 p-1 rounded-lg text-[#1A365D]" />
             <div>
               <span className="text-2xl font-bold text-[#1A365D] block">500+</span>
@@ -68,7 +68,7 @@ const Home = () => {
           {/* Stat 2 */}
           <div className="w-1/3 flex items-center pl-10 bg-white rounded-lg px-70 p border-2 py-5 m-8 hover:shadow-lg transition duration-300">
             <TbUsers size={30} className="mr-4 bg-gray-200 p-0.5 px-0.9 rounded-lg text-[#1A365D]" />
-            <div className='hover:shadow-lg transition duration-300'>
+            <div>
               <span className="text-2xl font-bold text-[#1A365D] block">1000+</span>
               <p className="text-md text-gray-600">Placed Students</p>
             </div>
@@ -77,7 +77,7 @@ const Home = () => {
           {/* Stat 3 */}
           <div className="w-1/3 flex items-center pl-10 bg-white rounded-lg px-70 p border-2 py-5 m-8 hover:shadow-lg transition duration-300">
             <IoMdTrendingUp size={30} className="mr-4 bg-gray-200 p-1 rounded-lg text-[#1A365D]"  />
-            <div className='hover:shadow-lg transition duration-300'>
+            <div>
               <span className="text-2xl font-bold text-[#1A365D] block">92%</span>
               <p className="text-md text-gray-600">Placement Rate</p>
             </div>
