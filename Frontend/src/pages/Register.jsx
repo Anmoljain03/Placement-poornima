@@ -9,7 +9,7 @@ import bgImage from "../assets/bg.png";
 const Register = ( { setAuthState}) => {
   const navigate = useNavigate();
 
-  // ✅ Validation Sch00ema using Yup//
+  //  Validation Schema using Yup//
   const validationSchema = Yup.object({
     name: Yup.string().required("Full Name is required"),
     email: Yup.string()
