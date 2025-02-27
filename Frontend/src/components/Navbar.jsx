@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { RiGraduationCapLine } from "react-icons/ri";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { showSuccessToast } from "../utils/toast";
 
 const Navbar = ({ isAuthenticated, setAuthState }) => {
   const location = useLocation();
@@ -17,7 +18,7 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
     setAuthState(false);
     setIsAuth(false);
     navigate("/");
-    alert("Logged out successfully");
+    showSuccessToast("Logged out successfully");
   };
 
   const navItems = [
@@ -76,7 +77,7 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
             {isAuth ? (
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 rounded-lg text-sm font-semibold bg-red-600 text-white hover:bg-red-800 transition duration-300"
+                className="px-4 py-2 -mt-3 rounded-lg text-sm font-semibold bg-gradient-to-r text-white from-purple-600 to-pink-600 opacity-75 transition duration-300"
               >
                 Logout
               </button>

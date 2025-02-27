@@ -8,10 +8,7 @@ import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Footer from "./components/Footer";
-import AdminLogin from "./pages/admin/AdminLogin";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AddJob from "./pages/admin/AddJob";
-import EditJob from "./pages/admin/EditJob";
+import { ToastContainer } from "react-toastify";
 
 const App = () => {
   const location = useLocation();
@@ -64,8 +61,7 @@ const App = () => {
         <Route path="/admin/add-job" element={isAdmin ? <AddJob /> : <Navigate to="/admin/login" />} />
         <Route path="/admin/edit-job/:jobId" element={isAdmin ? <EditJob /> : <Navigate to="/admin/login" />} />
       </Routes>
-
-      {!isAdminRoute && <Footer />}
+      <ToastContainer />
     </>
   );
 };

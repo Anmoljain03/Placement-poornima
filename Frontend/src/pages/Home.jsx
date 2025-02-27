@@ -4,6 +4,8 @@ import { IoMdTrendingUp } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
 import { LuBriefcase } from "react-icons/lu";
 
+
+
 const Home = () => {
   const navigate = useNavigate();
   const isAuthenticated = JSON.parse(localStorage.getItem("auth"))?.isAuthenticated || false;
@@ -110,7 +112,7 @@ const Home = () => {
       </section>
 
       {/* Featured Companies */}
-      <section className="space-y-6 bg-[#F8F9FA] ">
+      {/* <section className="space-y-6 bg-[#F8F9FA] ">
         <h2 className="text-2xl font-bold text-center text-primary">
           Featured Companies
         </h2>
@@ -124,7 +126,34 @@ const Home = () => {
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
+      
+
+
+    
+    <section className="space-y-6 bg-[#F8F9FA] p-8">
+      <h2 className="text-2xl text-center font-bold text-primary">
+        Featured Companies
+      </h2>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="aspect-video bg-white border-2 hover:border-[#1a365d] rounded-lg shadow-lg p-4 flex items-center justify-center transition-all duration-300 hover:scale-105">
+          <img src="/images/logo1.png" alt="Company Logo 1" className="max-h-full max-w-full object-contain" />
+        </div>
+        <div className="aspect-video bg-white border-2 hover:border-[#1a365d] rounded-lg shadow-lg p-4 flex items-center justify-center transition-all duration-300 hover:scale-105">
+          <img src="/images/infosys.png" alt="Company Logo 2" className="max-h-full max-w-full object-contain" />
+        </div>
+        <div className="aspect-video bg-white border-2 hover:border-[#1a365d] rounded-lg shadow-lg p-4 flex items-center justify-center transition-all duration-300 hover:scale-105">
+          <img src="/images/logo3.svg" alt="Company Logo 3" className="max-h-full max-w-full object-contain" />
+        </div>
+        <div className="aspect-video bg-white border-2 hover:border-[#1a365d] rounded-lg shadow-lg p-4 flex items-center justify-center transition-all duration-300 hover:scale-105">
+          <img src="/images/logo4.png" alt="Company Logo 4" className="max-h-full max-w-full object-contain" />
+        </div>
+      </div>
+    </section>
+  );
+
+
+
     </div>
   );
 };
