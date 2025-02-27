@@ -12,6 +12,7 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AddJob from "./pages/admin/AddJob";
 import EditJob from "./pages/admin/EditJob";
+import { ToastContainer } from "react-toastify";
 
 const App = () => {
   const location = useLocation();
@@ -66,6 +67,7 @@ const App = () => {
       </Routes>
 
       {!isAdminRoute && <Footer />}
+      <ToastContainer />
     </>
   );
 };
