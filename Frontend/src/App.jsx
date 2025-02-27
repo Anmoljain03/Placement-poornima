@@ -9,6 +9,7 @@ import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Footer from "./components/Footer";
+import { ToastContainer } from "react-toastify";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -42,7 +43,7 @@ const App = () => {
         <Route path="/login" element={<Login setAuthState={handleAuthChange} />} />
         <Route path="/register" element={<Register setAuthState={handleAuthChange} />} />
       </Routes>
-      <Footer />
+      <ToastContainer />
     </>
   );
 };

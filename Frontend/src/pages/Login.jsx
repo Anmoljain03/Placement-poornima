@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { showSuccessToast } from "../utils/toast";
+import { showErrorToast } from "../utils/toast";
+import { showWarningToast } from "../utils/toast";
 
 const Login = ({ setAuthState }) => {
   const [formData, setFormData] = useState({
@@ -32,29 +35,29 @@ const Login = ({ setAuthState }) => {
       localStorage.setItem("auth", JSON.stringify({ isAuthenticated: true }));
       
       setAuthState(true);
-      alert("Login Successful");
+      showSuccessToast("Login Successful");
       navigate("/");
     } catch (error) {
       console.error("Login Failed:", error.response?.data || error.message);
-      alert(error.response?.data?.message || "Login Failed");
+      showErrorToast(error.response?.data?.message || "Login Failed");
     }
   };
 
   // Send OTP for password reset
   const handleSendOTP = async () => {
     if (!email) {
-      alert("Please enter your email.");
+      showWarningToast("Please enter your email.");
       return;
     }
     try {
       const res = await axios.post("http://localhost:5000/api/auth/send-otp", { email });
       if (res.data.success) {
         setOtpSent(true);
-        alert("OTP sent successfully!");
+        showSuccessToast("OTP sent successfully!");
       }
     } catch (error) {
       console.error("OTP sending failed:", error.response?.data || error.message);
-      alert(error.response?.data?.message || "Error sending OTP. Try again.");
+      showWarningToast(error.response?.data?.message || "Error sending OTP. Try again.");
     }
   };
 
@@ -68,12 +71,12 @@ const Login = ({ setAuthState }) => {
         localStorage.setItem("auth", JSON.stringify({ isAuthenticated: true }));
         
         setAuthState(true);
-        alert("Login successful!");
+        showSuccessToast("Login successful!");
         navigate("/"); // Redirect to home page
       }
     } catch (error) {
       console.error("OTP verification failed:", error.response?.data?.message);
-      alert(error.response?.data?.message || "OTP verification failed");
+      showErrorToast(error.response?.data?.message || "OTP verification failed");
     }
   };
 
@@ -152,7 +155,7 @@ const Login = ({ setAuthState }) => {
                 />
 
                 <button
-                  className="w-full bg-[#d33b69] text-white p-3 font-sans rounded-md text-lg font-bold hover:bg-[#ff3366] transition-all duration-300 shadow-md transform hover:scale-105"
+                  className="w-full bg-[#d33b69] mt-4 text-white p-3 font-sans rounded-md text-lg font-bold hover:bg-[#ff3366] transition-all duration-300 shadow-md transform hover:scale-105"
                   onClick={handleSendOTP}
                 >
                   Send OTP
