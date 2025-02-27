@@ -11,7 +11,7 @@ import { showErrorToast } from "../utils/toast";
 const Register = ({ setAuthState }) => {
   const navigate = useNavigate();
 
-  //  Validation Schema using Yup//
+  // ✅ Validation Schema using Yup
   const validationSchema = Yup.object({
     name: Yup.string().required("Full Name is required"),
     email: Yup.string()

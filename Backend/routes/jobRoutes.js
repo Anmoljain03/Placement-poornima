@@ -1,12 +1,22 @@
 const express = require("express");
-const { postJob, getJobs } = require("../controllers/jobController");
+const { postJob, getAllJobs, editJob, deleteJob, getJobById } = require("../controllers/jobController");
+const { authenticateAdmin } = require("../middleware/adminMiddleware");
 
 const router = express.Router();
 
-// for posting job by admin
-router.post("/post-job", postJob);
+// ✅ Post a new job (Admin Only)
+router.post("/post-job", authenticateAdmin, postJob);
 
-// for getting jobs by user
-router.get("/jobs", getJobs);
+// ✅ Get all jobs (Accessible by Users)
+router.get("/", getAllJobs);
+
+// ✅ Get a single job by ID (Accessible by Users)
+router.get("/:id", getJobById); 
+
+// ✅ Edit job details (Admin Only)
+router.put("/edit/:id", authenticateAdmin, editJob);
+
+// ✅ Delete a job (Admin Only)
+router.delete("/delete/:jobId", authenticateAdmin, deleteJob);
 
 module.exports = router;
