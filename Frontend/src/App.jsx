@@ -61,9 +61,9 @@ const App = () => {
         <Route path="/login" element={<Login setAuthState={handleAuthChange} />} />
         <Route path="/register" element={<Register setAuthState={handleAuthChange} />} />
         <Route path="/notifications" element={<Notifications />} />
+        <Route path="/about" element={<About />} />
 
         {/* Admin Routes */}
-        
         <Route path="/admin/login" element={<AdminLogin setAdminAuth={handleAdminAuthChange} />} />
         <Route path="/admin/schedule-interview" element={<AdminScheduleInterview />} />
         <Route path="/admin/dashboard" element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin/login" />} />

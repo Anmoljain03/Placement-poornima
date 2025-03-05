@@ -9,53 +9,40 @@ import { useNavigate } from "react-router-dom";
 const Profile = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [academicDetails, setAcademicDetails] = useState({});
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingAcademic, setIsEditingAcademic] = useState(false);
 
-  // Fetch user data from backend
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        // console.log("Stored Token:", token); 
-    
-        if (!token) {
-          console.error("No token found, user not authenticated.");
-          return;
-        }
-    
-        const headers = {
-          "Content-Type": "application/json",
-          "Authorization": token, // 
-        };
-    
-        // console.log("Headers Sent:", headers);  
-        const response = await fetch("http://localhost:5000/api/auth/profile", {
-          method: "GET",
-          headers: headers,
-        });
-    
-        // console.log("Response Status:", response.status);
-    
-        const data = await response.json();
-        // console.log("User Data:", data);
-        
-        if (response.ok) {
-          setUser(data);
-        }
-      } catch (error) {
-        console.error("Error fetching profile data:", error.message);
-      }
-    };
-    
-
-    fetchUserData();
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      setUser(storedUser);
+    } else {
+      fetchUserData();
+    }
   }, []);
 
-  // Fetch notifications dynamically for the logged-in user
+  const fetchUserData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const response = await fetch("http://localhost:5000/api/auth/profile", {
+        method: "GET",
+        headers: { "Content-Type": "application/json", Authorization: token },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data);
+        localStorage.setItem("user", JSON.stringify(data));
+      }
+    } catch (error) {
+      console.error("Error fetching profile data:", error.message);
+    }
+  };
+
   useEffect(() => {
     if (user?.registrationNumber) {
       fetch(`http://localhost:5000/api/notifications/${user.registrationNumber}`)
@@ -72,56 +59,16 @@ const Profile = () => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const handleSave = async () => {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch("http://localhost:5000/api/auth/updateProfile", {
-        method: "PUT",
-        headers: {
-          "Authorization": token, 
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-      });
-
-      if (response.ok) {
-        showSuccessToast("Profile Updated Successfully!");
-        localStorage.setItem("user", JSON.stringify(user));
-        setIsEditing(false);
-      } else {
-        console.error("Failed to update profile");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
+  const handleSave = () => {
+    showSuccessToast("Profile Updated Successfully!");
+    localStorage.setItem("user", JSON.stringify(user));
+    setIsEditing(false);
   };
 
-  const handleAcademicChange = (e) => {
-    setAcademicDetails({ ...academicDetails, [e.target.name]: e.target.value });
-  };
-
-  const handleSaveAcademicDetails = async () => {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch("http://localhost:5000/api/auth/updateAcademic", {
-        method: "PUT",
-        headers: {
-          "Authorization": token,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(academicDetails),
-      });
-
-      if (response.ok) {
-        showSuccessToast("Academic Details Updated Successfully!");
-        localStorage.setItem("academicDetails", JSON.stringify(academicDetails));
-        setIsEditingAcademic(false);
-      } else {
-        console.error("Failed to update academic details");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
+  const handleSaveAcademic = () => {
+    showSuccessToast("Academic Details Updated Successfully!");
+    localStorage.setItem("user", JSON.stringify(user));
+    setIsEditingAcademic(false);
   };
 
   if (!user) {
@@ -129,8 +76,9 @@ const Profile = () => {
   }
 
   return (
-    <div>
-      <div className="px-10 p-10 m-auto items-center w-2/3 mt-7 rounded-lg h-auto bg-[#213A55] relative">
+    <div className="flex flex-col items-center mt-7">
+      {/* Profile Box */}
+      <div className="px-10 p-10 w-2/3 rounded-lg bg-[#213A55] relative">
         <FaBell
           className="absolute top-6 right-6 text-white text-4xl cursor-pointer hover:text-yellow-400"
           onClick={() => navigate("/notifications")}
@@ -153,22 +101,105 @@ const Profile = () => {
             <p className="text-sm text-pink-200 font-bold">Enrollment Number</p>
             <p className="text-white">{user.registrationNumber}</p>
             <p className="text-sm text-pink-200 font-bold">Academic Year</p>
-            <p className="text-white">{user.academicYear}</p>
+            {isEditing ? (
+              <input
+                type="text"
+                name="academicYear"
+                value={user.academicYear}
+                onChange={handleChange}
+                className="px-2 py-1 border border-gray-400 rounded"
+              />
+            ) : (
+              <p className="text-white">{user.academicYear}</p>
+            )}
             <p className="text-sm text-pink-200 font-bold">Current Semester</p>
-            <p className="text-white">{user.currentSemester}</p>
+            {isEditing ? (
+              <input
+                type="text"
+                name="currentSemester"
+                value={user.currentSemester}
+                onChange={handleChange}
+                className="px-2 py-1 border border-gray-400 rounded"
+              />
+            ) : (
+              <p className="text-white">{user.currentSemester}</p>
+            )}
           </div>
+          <button
+            onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
+             className="mt-4 ml-48 text-white font-semibold text-lg p-2 bg-[#EC4899] hover:bg-[#da2f84] rounded-md"
+          >
+            {isEditing ? "Save Changes" : "Edit Profile"}
+          </button>
         </div>
       </div>
 
-      {/* Academic Details Section */}
-      <div className="rounded-lg shadow-md p-6 ml-60 mr-60 border-2 border-[#1a365d] mt-[35px]">
-        <h3 className="text-xl font-semibold flex items-center gap-2 text-[#1a365d]">
-          <IoBookOutline size={24} /> Academic Details
-        </h3>
-        <p className="text-gray-700 mt-2">CGPA: {academicDetails.cgpa || "N/A"}</p>
-        <p className="text-gray-700 mt-2">SGPA: {academicDetails.sgpa || "N/A"}</p>
-        <p className="text-gray-700 mt-2">Backlogs: {academicDetails.backlogs || "N/A"}</p>
-        <p className="text-gray-700 mt-2">Attendance: {academicDetails.attendance || "N/A"}</p>
+      {/* Academic Details Box */}
+      <div className="px-10 p-10 w-2/3 rounded-lg bg-white mb-5 mt-5 border border-[#1a365d]">
+        <div className="flex items-center">
+          <IoBookOutline size={26} className="text-[#1a365d] mr-2" />
+          <h2 className="text-xl font-bold text-[#1a365d]">Academic Details</h2>
+        </div>
+        <div className="grid md:grid-cols-2 grid-rows-1 gap-3 mt-5">
+          <p className="text-sm text-[#1a365d] font-bold">CGPA</p>
+          {isEditingAcademic ? (
+            <input
+              type="text"
+              name="cgpa"
+              value={user.cgpa || ""}
+              onChange={handleChange}
+              className="px-2 py-1 border border-gray-400 rounded"
+            />
+          ) : (
+            <p className="text-[#1a365d] p-1 border border-black rounded">{user.cgpa || "N/A"}</p>
+          )}
+
+          <p className="text-sm text-[#1a365d] font-bold">SGPA</p>
+          {isEditingAcademic ? (
+            <input
+              type="text"
+              name="sgpa"
+              value={user.sgpa || ""}
+              onChange={handleChange}
+              className="px-2 py-1 border border-gray-400 rounded"
+            />
+          ) : (
+            <p className="text-[#1a365d] p-1 border border-black rounded">{user.sgpa || "N/A"}</p>
+          )}
+
+          <p className="text-sm text-[#1a365d] font-bold">Backlogs</p>
+          {isEditingAcademic ? (
+            <input
+              type="text"
+              name="backlogs"
+              value={user.backlogs || ""}
+              onChange={handleChange}
+              className="px-2 py-1 border border-gray-400 rounded"
+            />
+          ) : (
+            <p className="text-[#1a365d] p-1 border border-black rounded">{user.backlogs || "N/A"}</p>
+          )}
+
+          <p className="text-sm text-[#1a365d] font-bold">Attendance</p>
+          {isEditingAcademic ? (
+            <input
+              type="text"
+              name="attendance"
+              value={user.attendance || ""}
+              onChange={handleChange}
+              className="px-2 py-1 border border-gray-400 rounded"
+            />
+          ) : (
+            <p className="text-[#1a365d] p-1 border border-black rounded">{user.attendance || "N/A"}</p>
+          )}
+        </div>
+
+        <button
+          onClick={() => (isEditingAcademic ? handleSaveAcademic() : setIsEditingAcademic(true))}
+           className="mt-4 ml-48 text-white font-semibold text-lg p-2 bg-[#EC4899] hover:bg-[#da2f84] rounded-md"
+        >
+          {isEditingAcademic ? "Save Changes" : "Edit Academic Details"}
+        </button>
       </div>
     </div>
   );

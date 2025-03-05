@@ -134,6 +134,8 @@ const Login = ({ setAuthState }) => {
               </button>
             </form>
 
+            <button onClick={() => navigate("/register")}  className="w-full bg-[#d33b69] mt-7 text-white p-3 font-sans rounded-md text-lg font-bold hover:bg-[#ff3366] transition-all duration-300 shadow-md transform hover:scale-105">Sign Up</button>
+
             <button
               className="bg-slate-200 font-medium hover:bg-[#ff3366] transition-all duration-300 shadow-md transform hover:scale-105 text-[#1A365D] rounded p-3 mt-7 w-full"
               onClick={() => setShowForgotPassword(true)}

@@ -13,13 +13,13 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
   }, [isAuthenticated]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("auth");
+    localStorage.removeItem("token"); // Remove only the token, NOT the user details
     setAuthState(false);
     setIsAuth(false);
     navigate("/");
     showSuccessToast("Logged out successfully");
   };
+  
 
   const navItems = [
     { path: "/", label: "Home" },

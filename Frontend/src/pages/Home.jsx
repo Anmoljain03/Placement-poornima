@@ -4,8 +4,6 @@ import { IoMdTrendingUp } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
 import { LuBriefcase } from "react-icons/lu";
 
-
-
 const Home = () => {
   const navigate = useNavigate();
   const isAuthenticated = JSON.parse(localStorage.getItem("auth"))?.isAuthenticated || false;
@@ -26,7 +24,7 @@ const Home = () => {
       phone: "+91-9828510629",
     },
     {
-      name: "Mr. Rajesh Kumar",
+      name: "Mr. Babu Lal Sharma",
       title: "Industry Relations Head",
       department: "Placement Cell",
       email: "industry.relations@poomima.edu.in",
@@ -69,16 +67,16 @@ const Home = () => {
 
           {/* Stat 2 */}
           <div className="w-1/3 flex items-center pl-10 bg-white rounded-lg px-70 p border-2 py-5 m-8 hover:shadow-lg transition duration-300">
-            <TbUsers size={30} className="mr-4 bg-gray-200 p-0.5 px-0.9 rounded-lg text-[#1A365D]" />
+            <TbUsers size={30} className="mr-4 bg-gray-200 w-10 p-1 rounded-lg text-[#1A365D]" />
             <div>
               <span className="text-2xl font-bold text-[#1A365D] block">1000+</span>
-              <p className="text-md text-gray-600">Placed Students</p>
+              <p className="text-md text-gray-600">Placed Students </p>
             </div>
           </div>
 
           {/* Stat 3 */}
           <div className="w-1/3 flex items-center pl-10 bg-white rounded-lg px-70 p border-2 py-5 m-8 hover:shadow-lg transition duration-300">
-            <IoMdTrendingUp size={30} className="mr-4 bg-gray-200 p-1 rounded-lg text-[#1A365D]"  />
+            <IoMdTrendingUp size={30} className="mr-4 bg-gray-200 p-1 w-10 rounded-lg text-[#1A365D]"  />
             <div>
               <span className="text-2xl font-bold text-[#1A365D] block">92%</span>
               <p className="text-md text-gray-600">Placement Rate</p>
