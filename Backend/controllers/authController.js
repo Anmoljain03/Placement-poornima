@@ -63,7 +63,6 @@ exports.login = async (req, res) => {
             return res.status(400).json({ message: "All fields are required" });
         }
 
-        // Find user
         const user = await User.findOne({
             email: { $regex: new RegExp(`^${email}$`, "i") },
             registrationNumber: { $regex: new RegExp(`^${registrationNumber}$`, "i") },
@@ -73,21 +72,31 @@ exports.login = async (req, res) => {
             return res.status(400).json({ message: "User not found, please register" });
         }
 
-        // Compare password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid password" });
         }
 
-        // Generate JWT token
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-        res.status(200).json({ message: "Login successful", token });
+        // ✅ Return user details along with the token
+        res.status(200).json({
+            message: "Login successful",
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                department: user.department,
+                registrationNumber: user.registrationNumber,
+            },
+        });
     } catch (error) {
         console.error("Login Error:", error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 };
+
 
 // Send OTP via Email
 exports.sendOTP = async (req, res) => {
@@ -136,6 +145,34 @@ exports.sendOTP = async (req, res) => {
         res.status(500).json({ message: "Error sending OTP" });
     }
 };
+
+exports.getProfile = async (req, res) => {
+    try {
+        const authHeader = req.header("Authorization"); // Get the Authorization header
+        if (!authHeader) {
+            return res.status(401).json({ message: "No token provided or incorrect format" });
+        }
+        
+        let decoded;
+        try {
+            decoded = jwt.verify(authHeader, process.env.JWT_SECRET);
+        } catch (err) {
+            return res.status(401).json({ message: "Invalid or expired token" });
+        }
+
+        const user = await User.findById(decoded.id).select("-password");
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json(user);
+    } catch (error) {
+        console.error("Error fetching profile data:", error.message);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
+
 
 // Verify OTP & Login
 exports.verifyOTP = async (req, res) => {

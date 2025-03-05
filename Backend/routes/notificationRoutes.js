@@ -1,9 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const adminController = require("../controllers/adminController");
 
-// Example route (modify as needed)
-router.get("/", (req, res) => {
-    res.send("Notification API is working!");
-});
+// ✅ Correct route for fetching notifications
+router.get("/:userId", adminController.getNotifications);
 
 module.exports = router;
