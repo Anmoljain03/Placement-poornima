@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { showErrorToast,showWarningToast, showSuccessToast } from "../../utils/toast";
+import { useNavigate } from "react-router-dom";
 
 const AddJob = () => {
   const [job, setJob] = useState({
@@ -13,6 +15,8 @@ const AddJob = () => {
     applyLink: "",
     deadline: "",
   });
+
+  const navigate = useNavigate();
 
   const [requirement, setRequirement] = useState("");
 
@@ -36,7 +40,7 @@ const AddJob = () => {
 
     const token = localStorage.getItem("token"); // ✅ Admin token fetch kiya
     if (!token) {
-        alert("Admin not logged in!");
+        showWarningToast("Admin not logged in!");
         return;
     }
 
@@ -52,7 +56,8 @@ const AddJob = () => {
 
         const data = await response.json();
         if (response.ok) {
-            alert("Job Added Successfully!");
+            showSuccessToast("Job Added Successfully!");
+            navigate("/admin/dashboard")
             setJob({
                 jobTitle: "",
                 companyName: "",
@@ -66,11 +71,11 @@ const AddJob = () => {
                 deadline: "",
             });
         } else {
-            alert("Error: " + data.message);
+            showErrorToast("Error: " + data.message);
         }
     } catch (error) {
         console.error("Error adding job:", error);
-        alert("Error adding job: " + error.message);
+        showErrorToast("Error adding job: " + error.message);
     }
 };
 
@@ -164,7 +169,7 @@ const AddJob = () => {
         <input
           type="text"
           name="department"
-          placeholder="Department (e.g., CSE, ECE)"
+          placeholder="Department (e.g., BCA, BTECH)"
           className="border p-2 w-full"
           value={job.department}
           onChange={handleChange}

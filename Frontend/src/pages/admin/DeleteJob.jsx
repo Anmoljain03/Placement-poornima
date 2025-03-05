@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { showErrorToast, showSuccessToast, showWarningToast } from "../../utils/toast";
 
 const DeleteJob = () => {
   const [jobId, setJobId] = useState("");
@@ -7,7 +8,7 @@ const DeleteJob = () => {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      alert("No token found! Please login again.");
+      showWarningToast("No token found! Please login again.");
       return;
     }
 
@@ -26,10 +27,10 @@ const DeleteJob = () => {
         throw new Error(data.message || "Failed to delete job");
       }
 
-      alert("Job Deleted Successfully!");
+      showSuccessToast("Job Deleted Successfully!");
     } catch (error) {
       console.error("Error deleting job:", error.message);
-      alert(`Error deleting job: ${error.message}`);
+      showErrorToast(`Error deleting job: ${error.message}`);
     }
   };
 

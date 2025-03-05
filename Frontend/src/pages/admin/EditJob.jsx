@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { showErrorToast, showSuccessToast } from "../../utils/toast";
 
 const EditJob = () => {
   const { jobId } = useParams();  
@@ -60,11 +61,11 @@ const EditJob = () => {
         throw new Error(responseData.message || "Failed to update job");
       }
   
-      alert("Job Updated Successfully!");
-      navigate("/admin/jobs"); // ✅ Redirect to jobs list
+      showSuccessToast("Job Updated Successfully!");
+      navigate("/admin/dashboard"); // ✅ Redirect to jobs list
     } catch (error) {
       console.error("Error updating job:", error);
-      alert(error.message);
+      showErrorToast(error.message);
     } finally {
       setLoading(false);
     }

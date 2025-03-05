@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { showErrorToast, showSuccessToast, showWarningToast } from "../../utils/toast";
 
 const AdminLogin = ({ setAdminAuth }) => {
   const [email, setEmail] = useState("");
@@ -20,14 +21,17 @@ const AdminLogin = ({ setAdminAuth }) => {
 
       if (response.ok) {
         localStorage.setItem("token", data.token); // Store token
+        
         setAdminAuth(true); // Set state
-        navigate("/admin/dashboard"); // Redirect
+        
+        navigate("/admin/dashboard");
+        showSuccessToast("Login successfully!"); // Redirect
       } else {
-        alert(data.error);
+        showErrorToast(data.error);
       }
     } catch (error) {
       console.error("Login failed:", error);
-      alert("Something went wrong");
+      showWarningToast("Something went wrong");
     }
   };
 
@@ -40,6 +44,7 @@ const AdminLogin = ({ setAdminAuth }) => {
           placeholder="Email"
           className="w-full p-2 mb-3 border rounded"
           value={email}
+          autoComplete="username"
           onChange={(e) => setEmail(e.target.value)}
           required
         />
@@ -48,6 +53,7 @@ const AdminLogin = ({ setAdminAuth }) => {
           placeholder="Password"
           className="w-full p-2 mb-3 border rounded"
           value={password}
+          autoComplete="current-password"
           onChange={(e) => setPassword(e.target.value)}
           required
         />

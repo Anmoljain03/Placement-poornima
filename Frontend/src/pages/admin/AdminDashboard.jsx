@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
+import { showErrorToast, showSuccessToast } from "../../utils/toast";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const AdminDashboard = () => {
     try {
         const token = localStorage.getItem("token"); // ✅ Ensure token exists
         if (!token) {
-            alert("Admin not logged in!");
+            showErrorToast("Admin not logged in!");
             return;
         }
 
@@ -43,19 +44,20 @@ const AdminDashboard = () => {
             throw new Error("Failed to delete job");
         }
 
-        alert("Job deleted successfully!");
+        showSuccessToast("Job deleted successfully!");
         setJobs(jobs.filter((job) => job._id !== jobId)); // ✅ Update UI
     } catch (error) {
         console.error("Error deleting job:", error);
-        alert("Error deleting job: " + error.message);
+        showErrorToast("Error deleting job: " + error.message);
     }
 };
 
   
 
   const handleLogout = () => {
-    localStorage.removeItem("adminToken");
+    localStorage.removeItem("token");
     navigate("/admin/login");
+    showSuccessToast("Logout Successfully!");
   };
 
   return (

@@ -12,6 +12,7 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AddJob from "./pages/admin/AddJob";
 import EditJob from "./pages/admin/EditJob";
+import About from "./pages/About";
 import { ToastContainer } from "react-toastify";
 
 const App = () => {
@@ -20,17 +21,17 @@ const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // ✅ Fix: Check localStorage every time user navigates
+    // Fix: Check localStorage every time user navigates
     const checkAuthStatus = () => {
       const userAuth = JSON.parse(localStorage.getItem("auth"));
       setIsAuthenticated(userAuth?.isAuthenticated || false);
 
-      const adminToken = localStorage.getItem("adminToken");
+      const adminToken = localStorage.getItem("token");
       setIsAdmin(!!adminToken);
     };
 
     checkAuthStatus();
-  }, [location.pathname]); // 🔥 Runs whenever the route changes
+  }, [location.pathname]); //  Runs whenever the route changes
 
   const handleAuthChange = (authStatus) => {
     setIsAuthenticated(authStatus);
@@ -40,7 +41,7 @@ const App = () => {
   const handleAdminAuthChange = (adminStatus) => {
     setIsAdmin(adminStatus);
     if (!adminStatus) {
-      localStorage.removeItem("adminToken");
+      localStorage.removeItem("token");
     }
   };
 
@@ -58,6 +59,7 @@ const App = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login setAuthState={handleAuthChange} />} />
         <Route path="/register" element={<Register setAuthState={handleAuthChange} />} />
+        <Route path="/about" element={<About />} />
 
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin setAdminAuth={handleAdminAuthChange} />} />
