@@ -5,7 +5,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-
+const path = require("path");
 const notificationRoutes = require("./routes/notificationRoutes");
 const authRoutes = require("./routes/authRoutes");
 const jobRoutes = require("./routes/jobRoutes");
@@ -13,28 +13,28 @@ const adminRoutes = require("./routes/adminRoutes");
 
 dotenv.config();
 
-// Validate environment variables
+// ✅ Validate environment variables
 if (!process.env.MONGO_URI || !process.env.PORT) {
-    console.error("Missing required environment variables. Check .env file.");
+    console.error("❌ Missing required environment variables. Check your .env file.");
     process.exit(1);
 }
 
 const app = express();
 
-// Middleware
+// 🔹 Middleware
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(helmet()); // Security headers
 
-// Allow frontend to access API
+//  Proper CORS Configuration
 app.use(cors({
-    origin: "http://localhost:5173", // ✅ Your frontend URL
-    credentials: true, // ✅ Allow cookies and headers
-    allowedHeaders: ["Content-Type", "Authorization"], // ✅ Ensure Authorization header is allowed
-  }));
+    origin: "http://localhost:5173", // Allow frontend to access API
+    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
+    allowedHeaders: ["Content-Type", "Authorization"], // Allow Auth Header
+    credentials: true // Allow cookies if needed
+}));
 
-
-// Rate limiting (prevents abuse of endpoints)
+// ⏳ Rate limiting (prevents API abuse)
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100, // Limit each IP to 100 requests per window
@@ -42,19 +42,10 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// FIXED: Proper CORS Configuration
-app.use(cors({
-    origin: "http://localhost:5173", // Allow frontend
-    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
-    allowedHeaders: ["Content-Type", "Authorization"], // Allow Auth Header
-    credentials: true // Allow cookies if needed
-}));
-
-// Connect to MongoDB
 const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI);
-        console.log("MongoDB Connected Successfully");
+        console.log(" MongoDB Connected Successfully");
     } catch (error) {
         console.error(" MongoDB Connection Error:", error.message);
         process.exit(1);
@@ -62,27 +53,29 @@ const connectDB = async () => {
 };
 connectDB();
 
-// Routes
+// Handle MongoDB connection errors
+mongoose.connection.on("error", (err) => {
+    console.error(" MongoDB Connection Error:", err.message);
+});
+
+// 🔹 Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.get("/", (req, res) => {
     res.send("API is running!");
 });
 
-// Start Server
+// 🔹 Global Error Handler Middleware
+app.use((err, req, res, next) => {
+    console.error(" Global Error:", err.stack);
+    res.status(500).json({ message: "Internal Server Error" });
+});
+
+// 🔹 Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const server = app.listen(PORT, () => console.log(` Server running on port ${PORT}`));
 
-// Graceful Shutdown Handling
-process.on("uncaughtException", (err) => {
-    console.error(" Uncaught Exception:", err);
-    process.exit(1);
-});
-
-process.on("unhandledRejection", (err) => {
-    console.error("Unhandled Rejection:", err);
-    process.exit(1);
-});

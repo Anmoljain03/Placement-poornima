@@ -1,6 +1,6 @@
 const Job = require("../models/Jobs");
 
-// ✅ Admin posting a new job
+// Admin posting a new job
 const postJob = async (req, res) => {
     try {
         const requiredFields = [
@@ -16,13 +16,13 @@ const postJob = async (req, res) => {
             "deadline",
         ];
 
-        // ✅ Check for missing required fields
+        // check for missing required fields
         const missingFields = requiredFields.filter(field => !req.body[field]);
         if (missingFields.length > 0) {
             return res.status(400).json({ error: `Missing fields: ${missingFields.join(", ")}` });
         }
 
-        // ✅ Create & Save new job
+        // Create & Save new job
         const newJob = new Job(req.body);
         await newJob.save();
 
@@ -33,7 +33,7 @@ const postJob = async (req, res) => {
     }
 };
 
-// ✅ Get all jobs
+//Get all jobs
 const getAllJobs = async (req, res) => {
     try {
         const jobs = await Job.find();
@@ -44,7 +44,7 @@ const getAllJobs = async (req, res) => {
     }
 };
 
-// ✅ Get a single job by ID
+// Get a single job by ID
 const getJobById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -62,7 +62,7 @@ const getJobById = async (req, res) => {
     }
 };
 
-// ✅ Edit job (Admin only) - Ensures existing fields are not erased
+//  Edit job (Admin only) - Ensures existing fields are not erased
 const editJob = async (req, res) => {
     console.log("Edit Job Request Received:", req.body); // 👈 Check incoming data
     console.log("Job ID:", req.params.id); // 👈 Check Job ID
@@ -82,7 +82,7 @@ const editJob = async (req, res) => {
   };
   
   
-// ✅ Delete job (Admin only)
+//  Delete job (Admin only)
 const deleteJob = async (req, res) => {
     try {
         const { jobId } = req.params; // Ensure correct param name
