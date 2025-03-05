@@ -21,6 +21,7 @@ const AdminLogin = ({ setAdminAuth }) => {
 
       if (response.ok) {
         localStorage.setItem("token", data.token); // Store token
+        
         setAdminAuth(true); // Set state
         navigate("/admin/dashboard"); 
         showSuccessToast("Login successfully!"); // Redirect
@@ -42,6 +43,7 @@ const AdminLogin = ({ setAdminAuth }) => {
           placeholder="Email"
           className="w-full p-2 mb-3 border rounded"
           value={email}
+          autoComplete="username"
           onChange={(e) => setEmail(e.target.value)}
           required
         />
@@ -50,6 +52,7 @@ const AdminLogin = ({ setAdminAuth }) => {
           placeholder="Password"
           className="w-full p-2 mb-3 border rounded"
           value={password}
+          autoComplete="current-password"
           onChange={(e) => setPassword(e.target.value)}
           required
         />

@@ -12,18 +12,18 @@ const Home = () => {
 
   const teamMembers = [
     {
-      name: "Dr. Rakesh Sharma",
-      title: "Training & Placement Officer",
+      name: "Mr. Shubham Mahajan",
+      title: "Director, Corporate Relations",
       department: "Placement Cell",
-      email: "tpo@poornima.edu.in",
-      phone: "+91-9876543210",
+      email: "shubham.mahajan@poornima.edu.in || tpc@poornima.edu.in",
+      phone: "+91-9993353217",
     },
     {
-      name: "Mrs. Priya Verma",
-      title: "Placement Coordinator",
-      department: "CSE Department",
-      email: "placement.cse@poornima.edu.in",
-      phone: "+91-9876543211",
+      name: "Mrs. Dipti Lodha",
+      title: "Director, Corporate Relations || Placements & Training || Alumni Relations",
+      department: "Placement Cell",
+      email: "tpo@poornima.org || diptilodha@poornima.org",
+      phone: "+91-9828510629",
     },
     {
       name: "Mr. Rajesh Kumar",
@@ -37,7 +37,7 @@ const Home = () => {
   return (
     <div>
       <section className="text-center space-y-8 py-12 px-10 bg-[#f8f9fa]">
-        <h1 className="text-4xl md:text-5xl font-bold text-[#1A365D] animate-float">
+        <h1 className="text-4xl md:text-5xl mt-10 font-bold text-[#1A365D] animate-float">
           Welcome to Poornima Placements
         </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -111,23 +111,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured Companies */}
-      {/* <section className="space-y-6 bg-[#F8F9FA] ">
-        <h2 className="text-2xl font-bold text-center text-primary">
-          Featured Companies
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 p-8 gap-8">
-          {[1, 2, 3, 4].map((i) => (
-            <div
-              key={i}
-              className="aspect-video bg-white border-2 hover:border-gray-900 rounded-lg shadow-sm p-4 flex items-center justify-center"
-            >
-              <div className="text-gray-400 ">Company Logo, now if i am </div>
-            </div>
-          ))}
-        </div>
-      </section> */}
-      
 
 
     
@@ -150,7 +133,10 @@ const Home = () => {
         </div>
       </div>
     </section>
-  );
+    
+    <div className='pl-7 pr-7 mb-10'>
+        <img src="/images/footercover.webp" alt="Footer Cover" className="border rounded-md" />
+      </div>
 
 
 

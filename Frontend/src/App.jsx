@@ -12,6 +12,7 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AddJob from "./pages/admin/AddJob";
 import EditJob from "./pages/admin/EditJob";
+import About from "./pages/About";
 import { ToastContainer } from "react-toastify";
 import AdminScheduleInterview from "./pages/admin/AdminScheduleInterview";
 import Notifications from "./pages/Notifications";

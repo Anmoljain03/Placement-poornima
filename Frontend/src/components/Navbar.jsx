@@ -23,6 +23,7 @@ const Navbar = ({ isAuthenticated, setAuthState }) => {
 
   const navItems = [
     { path: "/", label: "Home" },
+    { path: "/about", label: "About" },
     { path: "/jobs", label: "Jobs" },
     { path: "/statistics", label: "Statistics" },
   ];

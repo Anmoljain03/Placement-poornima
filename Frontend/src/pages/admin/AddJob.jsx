@@ -170,7 +170,7 @@ const AddJob = () => {
         <input
           type="text"
           name="department"
-          placeholder="Department (e.g., CSE, ECE)"
+          placeholder="Department (e.g., BCA, BTECH)"
           className="border p-2 w-full"
           value={job.department}
           onChange={handleChange}
