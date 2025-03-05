@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { showErrorToast,showWarningToast, showSuccessToast } from "../../utils/toast";
 import { useNavigate } from "react-router-dom";
+import { showErrorToast, showSuccessToast } from "../../utils/toast";
 
 const AddJob = () => {
   const [job, setJob] = useState({
@@ -40,7 +40,7 @@ const AddJob = () => {
 
     const token = localStorage.getItem("token"); // ✅ Admin token fetch kiya
     if (!token) {
-        showWarningToast("Admin not logged in!");
+       showErrorToast("Admin not logged in!");
         return;
     }
 
@@ -49,7 +49,7 @@ const AddJob = () => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `${token}`, // ✅ Token added
+                Authorization: token, 
             },
             body: JSON.stringify(job),
         });
@@ -57,7 +57,7 @@ const AddJob = () => {
         const data = await response.json();
         if (response.ok) {
             showSuccessToast("Job Added Successfully!");
-            navigate("/admin/dashboard")
+            navigate("/admin/dashboard");
             setJob({
                 jobTitle: "",
                 companyName: "",
@@ -70,6 +70,7 @@ const AddJob = () => {
                 applyLink: "",
                 deadline: "",
             });
+            
         } else {
             showErrorToast("Error: " + data.message);
         }

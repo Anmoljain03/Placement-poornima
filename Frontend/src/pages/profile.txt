@@ -1,0 +1,487 @@
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { showSuccessToast } from "../utils/toast";
+import { showErrorToast } from "../utils/toast";
+import { showWarningToast } from "../utils/toast";
+
+const Login = ({ setAuthState }) => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    registrationNumber: ""
+  });
+
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+
+  const navigate = useNavigate();
+
+  // Handle form input changes
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Login with Email & Password
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://localhost:5000/api/auth/login", formData);
+      
+      // Save authentication details
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("auth", JSON.stringify({ isAuthenticated: true }));
+      
+      setAuthState(true);
+      showSuccessToast("Login Successful");
+      navigate("/");
+    } catch (error) {
+      console.error("Login Failed:", error.response?.data || error.message);
+      showErrorToast(error.response?.data?.message || "Login Failed");
+    }
+  };
+
+  // Send OTP for password reset
+  const handleSendOTP = async () => {
+    if (!email) {
+      showWarningToast("Please enter your email.");
+      return;
+    }
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/send-otp", { email });
+      if (res.data.success) {
+        setOtpSent(true);
+        showSuccessToast("OTP sent successfully!");
+      }
+    } catch (error) {
+      console.error("OTP sending failed:", error.response?.data || error.message);
+      showWarningToast(error.response?.data?.message || "Error sending OTP. Try again.");
+    }
+  };
+
+  // Verify OTP & log in
+  const handleVerifyOTP = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/auth/verify-otp", { email, otp });
+      if (response.data.token) {
+        // Save authentication details
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("auth", JSON.stringify({ isAuthenticated: true }));
+        
+        setAuthState(true);
+        showSuccessToast("Login successful!");
+        navigate("/"); // Redirect to home page
+      }
+    } catch (error) {
+      console.error("OTP verification failed:", error.response?.data?.message);
+      showErrorToast(error.response?.data?.message || "OTP verification failed");
+    }
+  };
+
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-[#36417c] to-[#d33b69] p-6 transition-all duration-300">
+        <div className="w-full max-w-md bg-[#0A1734] p-8 rounded-2xl mb-24 shadow-lg border border-[#d33b69] transition-all duration-300">
+        {!showForgotPassword ? (
+          // 🔹 Login Form
+          <div>
+            <h2 className="text-[#d33b69] text-4xl font-bold text-center mb-6 font-mono">Login</h2>
+            <form onSubmit={handleSubmit} className="w-full">
+              <div className="mb-4">
+                <label className="text-gray-300 font-semibold block mb-1">Email</label>
+
+                <input
+                  className="w-full p-3 rounded-md bg-[#132F5E] text-white placeholder-gray-400 focus:ring-2 focus:ring-[#d33b69] outline-none transition-all duration-300 hover:bg-[#1E3A8A]"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="text-gray-300 font-semibold block mb-1">Password</label>
+                <input
+                  className="w-full p-3 rounded-md bg-[#132F5E] text-white placeholder-gray-400 focus:ring-2 focus:ring-[#d33b69] outline-none transition-all duration-300 hover:bg-[#1E3A8A]"
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="text-gray-300 font-semibold block mb-1">Registration Number</label>
+                <input
+                  className="w-full p-3 rounded-md bg-[#132F5E] text-white placeholder-gray-400 focus:ring-2 focus:ring-[#d33b69] outline-none transition-all duration-300 hover:bg-[#1E3A8A]"
+                  type="text"
+                  name="registrationNumber"
+                  value={formData.registrationNumber}
+                  onChange={handleChange}
+                  placeholder="Enter your registration number"
+                  required
+                />
+              </div>
+
+              <button className="w-full bg-[#d33b69] text-white p-3 font-sans rounded-md text-lg font-bold hover:bg-[#ff3366] transition-all duration-300 shadow-md transform hover:scale-105" type="submit">
+                Login
+              </button>
+            </form>
+
+            <button
+              className="bg-slate-200 font-medium hover:bg-[#ff3366] transition-all duration-300 shadow-md transform hover:scale-105 text-[#1A365D] rounded p-3 mt-7 w-full"
+              onClick={() => setShowForgotPassword(true)}
+            >
+              🔐 Forgot Password
+            </button>
+          </div>
+        ) : (
+          // 🔹 Forgot Password (OTP Login)
+          <div>
+            <h2 className="text-[#d33b69] text-3xl font-bold text-center mb-6 font-mono">Forgot Password</h2>
+            {!otpSent ? (
+              <>
+                <input
+                  className="w-full p-3 rounded-md bg-[#132F5E] text-white placeholder-gray-400 focus:ring-2 focus:ring-[#d33b69] outline-none transition-all duration-300 hover:bg-[#1E3A8A]"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                />
+
+                <button
+                  className="w-full bg-[#d33b69] mt-4 text-white p-3 font-sans rounded-md text-lg font-bold hover:bg-[#ff3366] transition-all duration-300 shadow-md transform hover:scale-105"
+                  onClick={handleSendOTP}
+                >
+                  Send OTP
+                </button>
+              </>
+            ) : (
+              <>
+                <input
+                  className="w-full p-3 mb-4 rounded-md bg-[#132F5E] text-white placeholder-gray-400 focus:ring-2 focus:ring-[#d33b69] outline-none transition-all duration-300 hover:bg-[#1E3A8A]"
+                  type="text"
+                  placeholder="Enter OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                />
+                <button
+                  className="w-full bg-[#d33b69] text-white p-3 font-sans rounded-md text-lg font-bold hover:bg-[#ff3366] transition-all duration-300 shadow-md transform hover:scale-105"
+                  onClick={handleVerifyOTP}
+                >
+                  Submit
+                </button>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Login;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { useState, useEffect } from "react";
+import { FiUser } from "react-icons/fi";
+import { RiGraduationCapLine } from "react-icons/ri";
+import { IoBookOutline } from "react-icons/io5";
+import { FaBell } from "react-icons/fa";
+import { showSuccessToast } from "../utils/toast";
+import { useNavigate } from "react-router-dom";
+
+const Profile = () => {
+  const navigate = useNavigate();
+
+  // State for user details
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    department: "",
+    registrationNumber: "",
+    academicYear: "2022-2025",
+    currentSemester: "8th semester",
+  });
+
+  // State for academic details
+  const [academicDetails, setAcademicDetails] = useState({
+    cgpa: "",
+    sgpa: "",
+    backlogs: "",
+    attendance: "",
+  });
+
+  // State for notifications
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  // Fetch user & academic details from localStorage on component mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+    const storedAcademicDetails = localStorage.getItem("academicDetails");
+    if (storedAcademicDetails) {
+      setAcademicDetails(JSON.parse(storedAcademicDetails));
+    }
+  }, []);
+
+  // Fetch notifications based on user.registrationNumber
+  useEffect(() => {
+    if (user.registrationNumber) {
+      fetch(`http://localhost:5000/api/notifications/${user.registrationNumber}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setNotifications(data);
+          const unread = data.filter((n) => !n.read).length;
+          setUnreadCount(unread);
+        })
+        .catch((error) =>
+          console.error("Error fetching notifications:", error)
+        );
+    }
+  }, [user.registrationNumber]);
+
+  // State and functions for Profile Editing
+  const [isEditing, setIsEditing] = useState(false);
+  const handleChange = (e) =>
+    setUser({ ...user, [e.target.name]: e.target.value });
+  const handleSave = () => {
+    localStorage.setItem("user", JSON.stringify(user));
+    setIsEditing(false);
+    showSuccessToast("Profile Updated Successfully!");
+  };
+
+  // State and functions for Academic Details Editing
+  const [isEditingAcademic, setIsEditingAcademic] = useState(false);
+  const handleAcademicChange = (e) =>
+    setAcademicDetails({ ...academicDetails, [e.target.name]: e.target.value });
+  const handleSaveAcademicDetails = () => {
+    localStorage.setItem("academicDetails", JSON.stringify(academicDetails));
+    setIsEditingAcademic(false);
+    showSuccessToast("Academic Details Updated Successfully!");
+  };
+
+  return (
+    <div>
+      <div className="px-10 p-10 m-auto items-center w-2/3 mt-7 rounded-lg h-auto bg-[#213A55] relative">
+  
+        <FaBell
+          className="absolute top-6 right-6 text-white text-4xl cursor-pointer hover:text-yellow-400"
+          onClick={() => navigate("/notifications")}
+        />
+        {unreadCount > 0 && (
+          <span className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold rounded-full px-2 py-1">
+            {unreadCount}
+          </span>
+        )}
+        <div className="bg-[#324A6D] rounded-full backdrop-blur-sm p-8 w-32 h-32 float-left text-pink-400">
+          <FiUser size={86} className="w-16 h-16" />
+        </div>
+        <div className="pl-40">
+          <h2 className="text-2xl font-bold text-white">{user.name}</h2>
+          <RiGraduationCapLine
+            size={26}
+            className="h-5 w-5 float-left mr-2 mt-0.5 text-gray-300"
+          />
+          <p className="text-pink-200 flex items-center gap-2">
+            {user.department}
+          </p>
+          <div className="grid md:grid-cols-2 grid-rows-1 gap-3 mt-5">
+            <p className="text-sm text-pink-200 font-bold">University Email</p>
+            <p className="text-white">{user.email}</p>
+            <p className="text-sm text-pink-200 font-bold">Enrollment Number</p>
+            {isEditing ? (
+              <input
+                type="text"
+                name="registrationNumber"
+                value={user.registrationNumber}
+                onChange={handleChange}
+                className="rounded-md bg-gray-300 text-black"
+              />
+            ) : (
+              <p className="text-white">{user.registrationNumber}</p>
+            )}
+            <p className="text-sm text-pink-200 font-bold">Academic Year</p>
+            {isEditing ? (
+              <input
+                type="text"
+                name="academicYear"
+                value={user.academicYear}
+                onChange={handleChange}
+                className="rounded-md bg-gray-300 text-black"
+              />
+            ) : (
+              <p className="text-white">{user.academicYear}</p>
+            )}
+            <p className="text-sm text-pink-200 font-bold">
+              Current Semester
+            </p>
+            {isEditing ? (
+              <input
+                type="text"
+                name="currentSemester"
+                value={user.currentSemester}
+                onChange={handleChange}
+                className="rounded-md bg-gray-300 text-black"
+              />
+            ) : (
+              <p className="text-white">{user.currentSemester}</p>
+            )}
+          </div>
+          {!isEditing ? (
+            <button
+              className="mt-4 ml-48 text-white font-semibold text-sm p-2 bg-[#EC4899] hover:bg-[#da2f84] rounded-md"
+              onClick={() => setIsEditing(true)}
+            >
+              Edit Profile
+            </button>
+          ) : (
+            <button
+              className="mt-4 ml-48 text-white font-semibold text-sm p-2 bg-[#EC4899] hover:bg-[#da2f84] rounded-md"
+              onClick={handleSave}
+            >
+              Save Changes
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Academic Details Section */}
+      <div className="rounded-lg shadow-md p-6 ml-60 mr-60 border-2 border-[#1a365d] mt-[35px]">
+        <h3 className="text-xl font-semibold flex items-center gap-2 text-[#1a365d]">
+          <IoBookOutline size={24} className="font-bold" /> Academic Details
+        </h3>
+        {["cgpa", "sgpa", "backlogs", "attendance"].map((field, index) => (
+          <div key={index} className="flex justify-between items-center mt-3">
+            <span className="text-gray-600 mt-2 capitalize">{field}</span>
+            {isEditingAcademic ? (
+              <input
+                type="text"
+                name={field}
+                value={academicDetails[field] || ""}
+                onChange={handleAcademicChange}
+                className="rounded-md text-black"
+              />
+            ) : (
+              <span className="font-semibold text-[#1a365d]">
+                {academicDetails[field] || "N/A"}
+              </span>
+            )}
+          </div>
+        ))}
+        {!isEditingAcademic ? (
+          <button
+            className="mt-4 px-4 py-2 rounded-md font-semibold bg-[#1a365d] hover:bg-blue-700 text-white"
+            onClick={() => setIsEditingAcademic(true)}
+          >
+            Edit Academic Details
+          </button>
+        ) : (
+          <button
+            className="mt-4 px-4 py-2 rounded-md font-semibold bg-[#EC4899] hover:bg-[#da2f84] text-white"
+            onClick={handleSaveAcademicDetails}
+          >
+            Save Academic Details
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Profile;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+      const response = await axios.post("http://localhost:5000/api/auth/login", formData);
+      
+      // Debugging Logs 🛠️
+      console.log("Login Response:", response.data);
+
+      // Ensure `userId` exists in response
+      if (!response.data.user || !response.data.user._id) {
+          throw new Error("User ID missing in response");
+      }
+
+      // Save authentication details
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("userId", response.data.user._id);
+      localStorage.setItem("user", JSON.stringify(response.data.user)); // ✅ Save user details
+      localStorage.setItem("auth", JSON.stringify({ isAuthenticated: true }));
+
+      setAuthState(true);
+      showSuccessToast("Login Successful");
+      navigate("/");
+  } catch (error) {
+      console.error("Login Failed:", error.response?.data || error.message);
+      showErrorToast(error.response?.data?.message || "Login Failed");
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await axios.post("http://localhost:5000/api/auth/login", formData);
+    
+    // Save authentication details
+    localStorage.setItem("token", response.data.token);
+    localStorage.setItem("userId", response.data.user._id);
+
+    localStorage.setItem("user", JSON.stringify(response.data.user)); // ✅ Save user details
+    localStorage.setItem("auth", JSON.stringify({ isAuthenticated: true }));
+    
+    setAuthState(true);
+    showSuccessToast("Login Successful");
+    navigate("/");
+  } catch (error) {
+    console.error("Login Failed:", error.response?.data || error.message);
+    showErrorToast(error.response?.data?.message || "Login Failed");
+  }
+};

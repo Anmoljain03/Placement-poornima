@@ -23,8 +23,7 @@ const AdminLogin = ({ setAdminAuth }) => {
         localStorage.setItem("token", data.token); // Store token
         
         setAdminAuth(true); // Set state
-        
-        navigate("/admin/dashboard");
+        navigate("/admin/dashboard"); 
         showSuccessToast("Login successfully!"); // Redirect
       } else {
         showErrorToast(data.error);

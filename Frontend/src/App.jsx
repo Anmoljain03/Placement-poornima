@@ -14,6 +14,8 @@ import AddJob from "./pages/admin/AddJob";
 import EditJob from "./pages/admin/EditJob";
 import About from "./pages/About";
 import { ToastContainer } from "react-toastify";
+import AdminScheduleInterview from "./pages/admin/AdminScheduleInterview";
+import Notifications from "./pages/Notifications";
 
 const App = () => {
   const location = useLocation();
@@ -21,7 +23,7 @@ const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // Fix: Check localStorage every time user navigates
+   
     const checkAuthStatus = () => {
       const userAuth = JSON.parse(localStorage.getItem("auth"));
       setIsAuthenticated(userAuth?.isAuthenticated || false);
@@ -31,8 +33,7 @@ const App = () => {
     };
 
     checkAuthStatus();
-  }, [location.pathname]); //  Runs whenever the route changes
-
+  }, [location.pathname]); 
   const handleAuthChange = (authStatus) => {
     setIsAuthenticated(authStatus);
     localStorage.setItem("auth", JSON.stringify({ isAuthenticated: authStatus }));
@@ -59,10 +60,12 @@ const App = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login setAuthState={handleAuthChange} />} />
         <Route path="/register" element={<Register setAuthState={handleAuthChange} />} />
-        <Route path="/about" element={<About />} />
+        <Route path="/notifications" element={<Notifications />} />
 
         {/* Admin Routes */}
+        
         <Route path="/admin/login" element={<AdminLogin setAdminAuth={handleAdminAuthChange} />} />
+        <Route path="/admin/schedule-interview" element={<AdminScheduleInterview />} />
         <Route path="/admin/dashboard" element={isAdmin ? <AdminDashboard /> : <Navigate to="/admin/login" />} />
         <Route path="/admin/add-job" element={isAdmin ? <AddJob /> : <Navigate to="/admin/login" />} />
         <Route path="/admin/edit-job/:jobId" element={isAdmin ? <EditJob /> : <Navigate to="/admin/login" />} />

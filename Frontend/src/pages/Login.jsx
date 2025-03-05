@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { showSuccessToast } from "../utils/toast";
-import { showErrorToast } from "../utils/toast";
-import { showWarningToast } from "../utils/toast";
+import { showSuccessToast, showErrorToast, showWarningToast } from "../utils/toast";
 
 const Login = ({ setAuthState }) => {
   const [formData, setFormData] = useState({
@@ -24,26 +22,29 @@ const Login = ({ setAuthState }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Login with Email & Password
+  // 🔹 Login with Email & Password
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/login", formData);
-      
-      // Save authentication details
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("auth", JSON.stringify({ isAuthenticated: true }));
-      
-      setAuthState(true);
-      showSuccessToast("Login Successful");
-      navigate("/");
-    } catch (error) {
-      console.error("Login Failed:", error.response?.data || error.message);
-      showErrorToast(error.response?.data?.message || "Login Failed");
-    }
-  };
+        const response = await axios.post("http://localhost:5000/api/auth/login", formData);
+        
+        // console.log("Login Response:", response.data);  // 
 
-  // Send OTP for password reset
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("userId", response.data.user.id); 
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        localStorage.setItem("auth", JSON.stringify({ isAuthenticated: true }));
+
+        setAuthState(true);
+        showSuccessToast("Login Successful");
+        navigate("/");
+    } catch (error) {
+        console.error("Login Failed:", error.response?.data || error.message);
+        showErrorToast(error.response?.data?.message || "Login Failed");
+    }
+};
+
+  // 🔹 Send OTP for password reset
   const handleSendOTP = async () => {
     if (!email) {
       showWarningToast("Please enter your email.");
@@ -61,13 +62,14 @@ const Login = ({ setAuthState }) => {
     }
   };
 
-  // Verify OTP & log in
+  // 🔹 Verify OTP & log in
   const handleVerifyOTP = async () => {
     try {
       const response = await axios.post("http://localhost:5000/api/auth/verify-otp", { email, otp });
       if (response.data.token) {
         // Save authentication details
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user)); // ✅ Save user details
         localStorage.setItem("auth", JSON.stringify({ isAuthenticated: true }));
         
         setAuthState(true);

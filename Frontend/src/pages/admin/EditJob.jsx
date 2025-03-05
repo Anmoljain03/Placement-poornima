@@ -54,15 +54,15 @@ const EditJob = () => {
         body: JSON.stringify(jobData),
       });
   
-      const responseData = await response.json();  // 👈 Yeh add kiya
-      console.log("Backend Response:", responseData); // 👈 Backend ka response dekhne ke liye
+      const responseData = await response.json();  // 
+      console.log("Backend Response:", responseData); // 
   
       if (!response.ok) {
         throw new Error(responseData.message || "Failed to update job");
       }
   
       showSuccessToast("Job Updated Successfully!");
-      navigate("/admin/dashboard"); // ✅ Redirect to jobs list
+      navigate("/admin/dashboard"); 
     } catch (error) {
       console.error("Error updating job:", error);
       showErrorToast(error.message);
