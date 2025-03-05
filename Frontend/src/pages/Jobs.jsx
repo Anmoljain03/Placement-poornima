@@ -15,7 +15,7 @@ const Jobs = () => {
     const fetchJobs = async () => {
       try {
         const response = await fetch("http://localhost:5000/api/jobs");
-        if (!response.ok) throw new Error("Failed to fetch jobs");
+        if (!response.ok) throw new Error("Failed to fetch jobs");  
         const data = await response.json();
         setJobs(data);
       } catch (error) {
@@ -46,7 +46,7 @@ const Jobs = () => {
           </span>
           <input 
             type="search" 
-            className="h-10 w-full pl-10 pr-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black" 
+            className="h-10 w-full pl-10 pr-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black " 
             placeholder="Search Opportunities" 
           />
         </div>
@@ -108,7 +108,7 @@ const Jobs = () => {
                   </span>
 
                   {/* Duration */}
-                  <span className="flex items-center space-x-1 text-gray-800">
+                  <span className="flex items-center space-x-1 text-gray-800 bg-red-">
                     <IoIosTimer className="text-lg" />
                     <span>{job.duration}</span>
                   </span>
@@ -141,7 +141,7 @@ const Jobs = () => {
                 >
                   Apply Now
                 </a>
-                <p className="text-sm mt-3 px-3 py-1 bg-[#FCE7F3] rounded-full text-[#BE185D]">
+                <p className="text-sm mt-3 px-3 py-1 bg-[#FCE7F3] rounded-full text-[#BE185D]"> 
                   {job.department}
                 </p>
               </div>

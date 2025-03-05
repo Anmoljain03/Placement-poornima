@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { showErrorToast, showSuccessToast } from "../../utils/toast";
 
 const AddJob = () => {
   const [job, setJob] = useState({
@@ -13,6 +15,8 @@ const AddJob = () => {
     applyLink: "",
     deadline: "",
   });
+
+  const navigate = useNavigate();
 
   const [requirement, setRequirement] = useState("");
 
@@ -36,7 +40,7 @@ const AddJob = () => {
 
     const token = localStorage.getItem("token"); // ✅ Admin token fetch kiya
     if (!token) {
-        alert("Admin not logged in!");
+       showErrorToast("Admin not logged in!");
         return;
     }
 
@@ -45,14 +49,15 @@ const AddJob = () => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `${token}`, // ✅ Token added
+                Authorization: token, 
             },
             body: JSON.stringify(job),
         });
 
         const data = await response.json();
         if (response.ok) {
-            alert("Job Added Successfully!");
+            showSuccessToast("Job Added Successfully!");
+            navigate("/admin/dashboard");
             setJob({
                 jobTitle: "",
                 companyName: "",
@@ -65,12 +70,13 @@ const AddJob = () => {
                 applyLink: "",
                 deadline: "",
             });
+            
         } else {
-            alert("Error: " + data.message);
+            showErrorToast("Error: " + data.message);
         }
     } catch (error) {
         console.error("Error adding job:", error);
-        alert("Error adding job: " + error.message);
+        showErrorToast("Error adding job: " + error.message);
     }
 };
 

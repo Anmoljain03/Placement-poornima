@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { showErrorToast, showSuccessToast } from "../../utils/toast";
 
 const EditJob = () => {
   const { jobId } = useParams();  
@@ -53,18 +54,18 @@ const EditJob = () => {
         body: JSON.stringify(jobData),
       });
   
-      const responseData = await response.json();  // 👈 Yeh add kiya
-      console.log("Backend Response:", responseData); // 👈 Backend ka response dekhne ke liye
+      const responseData = await response.json();  // 
+      console.log("Backend Response:", responseData); // 
   
       if (!response.ok) {
         throw new Error(responseData.message || "Failed to update job");
       }
   
-      alert("Job Updated Successfully!");
-      navigate("/admin/jobs"); // ✅ Redirect to jobs list
+      showSuccessToast("Job Updated Successfully!");
+      navigate("/admin/dashboard"); 
     } catch (error) {
       console.error("Error updating job:", error);
-      alert(error.message);
+      showErrorToast(error.message);
     } finally {
       setLoading(false);
     }

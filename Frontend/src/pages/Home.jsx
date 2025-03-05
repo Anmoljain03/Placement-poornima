@@ -97,7 +97,7 @@ const Home = () => {
                 <i className="fas fa-user-circle fa-3x text-gray-500"></i>
               </div>
               <h3 className="text-xl font-semibold text-[#1A365D] mb-2">{member.name}</h3>
-              <p className="text-[#DB6777] font-semibold mb-1">{member.title}</p>
+              <p className="text-[#DB6777] font-semibold mb-1 bg-red-">{member.title}</p>
               <p className="text-gray-600 mb-4">{member.department}</p>
               <div className="flex items-center justify-center space-x-2">
                 <a href={`mailto:${member.email}`} className="text-gray-600 hover:text-[#1A365D]">

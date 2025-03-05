@@ -54,7 +54,7 @@ const Register = ({ setAuthState }) => {
 
   return (
     <div className="flex h-screen items-center justify-center bg-gradient-to-r from-[#0A1734] to-[#d33b69] p-4">
-      <div className="w-full max-w-4xl bg-white p-8 rounded-2xl shadow-2xl flex flex-col md:flex-row overflow-hidden">
+      <div className="w-full max-w-4xl bg-white p-8 rounded-2xl shadow-2xl flex flex-col md:flex-row overflow-hidden ">
         {/* Left Side Image Section */}
         <div className="hidden md:flex w-1/2 items-center justify-center bg-contain bg-no-repeat bg-center" style={{ backgroundImage: `url(${bgImage})` }}></div>
 

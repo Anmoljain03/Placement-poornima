@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { showErrorToast, showSuccessToast, showWarningToast } from "../../utils/toast";
 
 const AdminLogin = ({ setAdminAuth }) => {
   const [email, setEmail] = useState("");
@@ -21,13 +22,14 @@ const AdminLogin = ({ setAdminAuth }) => {
       if (response.ok) {
         localStorage.setItem("token", data.token); // Store token
         setAdminAuth(true); // Set state
-        navigate("/admin/dashboard"); // Redirect
+        navigate("/admin/dashboard"); 
+        showSuccessToast("Login successfully!"); // Redirect
       } else {
-        alert(data.error);
+        showErrorToast(data.error);
       }
     } catch (error) {
       console.error("Login failed:", error);
-      alert("Something went wrong");
+      showWarningToast("Something went wrong");
     }
   };
 
