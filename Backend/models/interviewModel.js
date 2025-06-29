@@ -7,7 +7,7 @@ const interviewSchema = new mongoose.Schema({
   interviewTime: { type: String, required: true },
   location: { type: String },
   interviewLink: { type: String },
-  file: { type: String }, // ✅ Store file path or name
+  file: { type: String },
 });
 
 const Interview = mongoose.model("Interview", interviewSchema);

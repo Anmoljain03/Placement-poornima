@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// ✅ Success Toast
+// Success Toast
 export const showSuccessToast = (message) => {
   toast.success(` ${message}`, {
     position: "top-right",
@@ -14,7 +14,7 @@ export const showSuccessToast = (message) => {
   });
 };
 
-// ❌ Error Toast
+// Error Toast
 export const showErrorToast = (message) => {
   toast.error(` ${message}`, {
     position: "top-right",
@@ -27,7 +27,7 @@ export const showErrorToast = (message) => {
   });
 };
 
-// ⚠️ Warning Toast
+// Warning Toast
 export const showWarningToast = (message) => {
   toast.warn(` ${message}`, {
     position: "top-right",
@@ -40,7 +40,7 @@ export const showWarningToast = (message) => {
   });
 };
 
-// ℹ️ Info Toast
+// Info Toast
 export const showInfoToast = (message) => {
   toast.info(` ${message}`, {
     position: "top-right",

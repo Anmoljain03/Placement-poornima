@@ -1,0 +1,20 @@
+db.placementtrackings.insertMany([
+  {
+    userId: ObjectId("67c9c7f75b6e80aa65a8899f"),
+    jobId: ObjectId("67caf490412ffc32ee587721"),
+    companyName: "Tech Corp",
+    jobTitle: "Software Engineer",
+    status: "Pending",
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    userId: ObjectId("67c9c7f75b6e80aa65a8899f"),
+    jobId: ObjectId("67d157300a10abfa527828e8"),
+    companyName: "InnovateX",
+    jobTitle: "Data Analyst",
+    status: "Interview Scheduled",
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
+]);

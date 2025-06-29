@@ -1,208 +1,519 @@
 import React, { useState, useEffect } from "react";
-import { FiUser } from "react-icons/fi";
-import { RiGraduationCapLine } from "react-icons/ri";
-import { IoBookOutline } from "react-icons/io5";
-import { FaBell } from "react-icons/fa";
 import { showSuccessToast } from "../utils/toast";
-import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FaGraduationCap, FaChartLine, FaExclamationCircle, FaPercentage, FaEdit, FaSave, FaCamera, FaCalendar, FaBriefcase } from "react-icons/fa";
 
 const Profile = () => {
-  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("academic");
+  const [isEditing, setIsEditing] = useState(false);
+  const [applications, setApplications] = useState(0);
+  const [notifications, setNotifications] = useState(0);
+  const [profileCompletion, setProfileCompletion] = useState(0);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
 
-  // State for user details
   const [user, setUser] = useState({
+    id: "",
     name: "",
     email: "",
-    department: "",
     registrationNumber: "",
-    academicYear: "2022-2025",
-    currentSemester: "8th semester",
-  });
-
-  // State for academic details
-  const [academicDetails, setAcademicDetails] = useState({
+    department: "",
+    academicYear: "",
+    aboutMe: "",
+    semester: "",
     cgpa: "",
-    sgpa: "",
     backlogs: "",
     attendance: "",
+    profilePicture: null,
+    applications: 0,
+    interviews: 0,
   });
 
-  // State for notifications
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-
-  // Fetch user & academic details from localStorage on component mount
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
+      calculateProfileCompletion(JSON.parse(storedUser));
     }
-    const storedAcademicDetails = localStorage.getItem("academicDetails");
-    if (storedAcademicDetails) {
-      setAcademicDetails(JSON.parse(storedAcademicDetails));
-    }
+    fetchUserData();
   }, []);
 
-  // Fetch notifications based on user.registrationNumber
-  useEffect(() => {
-    if (user.registrationNumber) {
-      fetch(`http://localhost:5000/api/notifications/${user.registrationNumber}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setNotifications(data);
-          const unread = data.filter((n) => !n.read).length;
-          setUnreadCount(unread);
-        })
-        .catch((error) =>
-          console.error("Error fetching notifications:", error)
-        );
+  const fetchUserData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const response = await fetch("http://localhost:5000/api/auth/profile", {
+        method: "GET",
+        headers: { "Content-Type": "application/json", Authorization: token },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Fetched Data from API:", data);
+
+        const newUserData = {
+          id: data._id || "",
+          name: data.name || "",
+          email: data.email || "",
+          registrationNumber: data.registrationNumber || "",
+          department: data.department || "",
+          applications: data.applications || 0,
+          interviews: data.interviews || 0,
+          cgpa: data.cgpa || "",
+          academicYear: data.academicYear || "",
+          backlogs: data.backlogs || "",
+          attendance: data.attendance || "",
+          profilePicture: data.profilePicture || null,
+        };
+
+        setUser(newUserData);
+        setApplications(data.applications || 0);
+        setNotifications(data.notifications || 0);
+        calculateProfileCompletion(newUserData);
+
+        localStorage.setItem("user", JSON.stringify(newUserData));
+      }
+    } catch (error) {
+      console.error("Error fetching profile data:", error.message);
     }
-  }, [user.registrationNumber]);
-
-  // State and functions for Profile Editing
-  const [isEditing, setIsEditing] = useState(false);
-  const handleChange = (e) =>
-    setUser({ ...user, [e.target.name]: e.target.value });
-  const handleSave = () => {
-    localStorage.setItem("user", JSON.stringify(user));
-    setIsEditing(false);
-    showSuccessToast("Profile Updated Successfully!");
   };
 
-  // State and functions for Academic Details Editing
-  const [isEditingAcademic, setIsEditingAcademic] = useState(false);
-  const handleAcademicChange = (e) =>
-    setAcademicDetails({ ...academicDetails, [e.target.name]: e.target.value });
-  const handleSaveAcademicDetails = () => {
-    localStorage.setItem("academicDetails", JSON.stringify(academicDetails));
-    setIsEditingAcademic(false);
-    showSuccessToast("Academic Details Updated Successfully!");
+  const calculateProfileCompletion = (data) => {
+    const fields = ["profilePicture", "cgpa", "academicYear", "backlogs", "attendance"];
+    const filledFields = fields.filter((field) => data[field]);
+    const completionPercentage = (filledFields.length / fields.length) * 100;
+    setProfileCompletion(completionPercentage);
   };
 
-  return (
-    <div>
-      <div className="px-10 p-10 m-auto items-center w-2/3 mt-7 rounded-lg h-auto bg-[#213A55] relative">
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    const updatedUser = { ...user, [name]: value };
+    setUser(updatedUser);
+    calculateProfileCompletion(updatedUser);
+  };
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      setUser(storedUser);
+    }
+  }, []);
   
-        <FaBell
-          className="absolute top-6 right-6 text-white text-4xl cursor-pointer hover:text-yellow-400"
-          onClick={() => navigate("/notifications")}
-        />
-        {unreadCount > 0 && (
-          <span className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold rounded-full px-2 py-1">
-            {unreadCount}
-          </span>
-        )}
-        <div className="bg-[#324A6D] rounded-full backdrop-blur-sm p-8 w-32 h-32 float-left text-pink-400">
-          <FiUser size={86} className="w-16 h-16" />
-        </div>
-        <div className="pl-40">
-          <h2 className="text-2xl font-bold text-white">{user.name}</h2>
-          <RiGraduationCapLine
-            size={26}
-            className="h-5 w-5 float-left mr-2 mt-0.5 text-gray-300"
+
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const updatedBacklogs = user.backlogs !== undefined ? user.backlogs : 0; // 👀 Ensure 0 is sent
+  
+      console.log("Sending Data:", {  
+        cgpa: user.cgpa,
+        academicYear: user.academicYear,
+        backlogs: user.backlogs !== "" ? Number(user.backlogs) : 0, 
+        attendance: user.attendance,
+        profilePicture: imagePreview || user.profilePicture, 
+      });
+  
+      const response = await fetch("http://localhost:5000/api/auth/update-profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+        body: JSON.stringify({
+          cgpa: user.cgpa,
+          academicYear: user.academicYear,
+          backlogs: user.backlogs,
+          attendance: user.attendance,
+          profilePicture: imagePreview || user.profilePicture, 
+        }),
+      });
+  
+      if (!response.ok) {
+        console.error("Error updating profile");
+        return;
+      }
+  
+      // ✅ Ek baar hi response.json() call karo
+      const data = await response.json();
+      console.log("Response from server:", data);
+  
+      showSuccessToast("Profile Updated Successfully!");
+      setIsEditing(false);
+      setUser(data.user);
+      localStorage.setItem("user", JSON.stringify(data.user)); 
+  
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  
+
+  const handleProfileImageClick = () => {
+    document.getElementById("imageInput").click();
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const updatedUser = { ...user, profilePicture: reader.result };
+        setImagePreview(reader.result);
+        setUser(updatedUser);
+        calculateProfileCompletion(updatedUser);
+      };
+      reader.readAsDataURL(file);
+      setImageFile(file);
+    }
+  };
+
+  
+  return (
+    <div className="p-6 mx-auto bg-white shadow-lg">
+     <div className="bg-gradient-to-r from-[#243b53] to-[#3a4957] p-6 h-76 w-[90%] m-auto shadow-lg text-white rounded-lg">
+  <div className="flex items-center space-x-6"></div>
+
+  {/* Profile Completion Bar */}
+  <div className="bg-gradient-to-r from-[#243b53] to-[#3a4957] mt-[-20px] p-6 h-76 w-[90%] text-white">
+    <div className="flex items-center space-x-6">
+      {/* Profile Image with Camera Icon */}
+      <div
+        className="relative w-28 h-28 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center cursor-pointer group overflow-hidden"
+        onClick={handleProfileImageClick}
+      >
+        {imagePreview ? (
+          <img
+            src={imagePreview}
+            alt="Profile"
+            className="w-full h-full rounded-full object-cover"
           />
-          <p className="text-pink-200 flex items-center gap-2">
-            {user.department}
-          </p>
-          <div className="grid md:grid-cols-2 grid-rows-1 gap-3 mt-5">
-            <p className="text-sm text-pink-200 font-bold">University Email</p>
-            <p className="text-white">{user.email}</p>
-            <p className="text-sm text-pink-200 font-bold">Enrollment Number</p>
-            {isEditing ? (
-              <input
-                type="text"
-                name="registrationNumber"
-                value={user.registrationNumber}
-                onChange={handleChange}
-                className="rounded-md bg-gray-300 text-black"
-              />
-            ) : (
-              <p className="text-white">{user.registrationNumber}</p>
-            )}
-            <p className="text-sm text-pink-200 font-bold">Academic Year</p>
-            {isEditing ? (
-              <input
-                type="text"
-                name="academicYear"
-                value={user.academicYear}
-                onChange={handleChange}
-                className="rounded-md bg-gray-300 text-black"
-              />
-            ) : (
-              <p className="text-white">{user.academicYear}</p>
-            )}
-            <p className="text-sm text-pink-200 font-bold">
-              Current Semester
-            </p>
-            {isEditing ? (
-              <input
-                type="text"
-                name="currentSemester"
-                value={user.currentSemester}
-                onChange={handleChange}
-                className="rounded-md bg-gray-300 text-black"
-              />
-            ) : (
-              <p className="text-white">{user.currentSemester}</p>
-            )}
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-white/10 border-2 border-white/30 rounded-full group-hover:bg-orange-100 group-hover:border-teal-600 transition-all duration-200">
+            <FaCamera className="text-4xl text-white group-hover:text-white transition-colors duration-200" />
           </div>
-          {!isEditing ? (
-            <button
-              className="mt-4 ml-48 text-white font-semibold text-sm p-2 bg-[#EC4899] hover:bg-[#da2f84] rounded-md"
-              onClick={() => setIsEditing(true)}
-            >
-              Edit Profile
-            </button>
-          ) : (
-            <button
-              className="mt-4 ml-48 text-white font-semibold text-sm p-2 bg-[#EC4899] hover:bg-[#da2f84] rounded-md"
-              onClick={handleSave}
-            >
-              Save Changes
-            </button>
-          )}
+        )}
+        <input
+          id="imageInput"
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="hidden"
+        />
+      </div>
+
+      {/* User Details */}
+      <div className="flex-1">
+        <h2 className="text-3xl font-bold mt-1">{user.name}</h2>
+        <p className="text-xl">{user.department}</p>
+        <p className="text-lg mt-1 text-gray-300">{user.email}</p>
+      </div>
+
+      {/* Profile Completion Box */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center justify-between bg-white/10 border border-white/20 rounded-lg p-4 w-76 shadow-sm mr-auto" 
+      >
+        <span className="text-white text-lg font-medium">Complete Your Profile</span>
+
+        <div className="relative w-24 h-24">
+          <svg className="w-full h-full" viewBox="0 0 64 64">
+            {/* Background Circle (Gray) */}
+            <circle cx="32" cy="32" r="28" strokeWidth="4" stroke="#e5e7eb" fill="transparent" />
+            
+            {/* Progress Circle */}
+            <motion.circle
+              cx="32" cy="32" r="28" strokeWidth="4" stroke="teal"
+              fill="transparent"
+              strokeDasharray="176"  // Adjusted for full circumference
+              strokeDashoffset={176 * (1 - profileCompletion / 100)}  
+              initial={{ strokeDashoffset: 176 }}  
+              animate={{ strokeDashoffset: 176 * (1 - profileCompletion / 100) }} 
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+              strokeLinecap="round"
+            />
+          </svg>
+
+          {/* Percentage Label */}
+          <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold">
+            {profileCompletion}%
+          </span>
+        </div>
+      </motion.div>     
+    </div>
+  </div>
+
+  {/* Applications & Notifications Section */}
+  <div className="mt-[30px] flex space-x-4">
+    <div className="flex-1 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-lg text-center hover:bg-white/20">
+      <p className="text-lg font-semibold">{applications}</p>
+      <p className="text-sm">Applications</p>
+    </div>
+    <div className="flex-1 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-lg text-center hover:bg-white/20">
+      <p className="text-lg font-semibold">{notifications}</p>
+      <p className="text-sm">Notifications</p>
+    </div>
+  </div>
+
+  {/* Save Button to Update Profile */}
+  
+</div>
+
+    
+
+      {/* Profile Info Box */}
+   
+
+      {/* Navbar */}
+      <div className="mt-6 flex justify-center border-2 w-[80%] mx-auto mb-6  border-gray-300 rounded-lg shadow-md bg-gray-200">
+        
+  <button
+    className={`px-10 py-3 text-lg font-medium transition-all duration-300 rounded-tl-lg rounded-tr-lg ${
+      activeTab === "academic"
+        ? "text-white border-b-4 border-blue-500 font-semibold bg-blue-950"
+        : "text-gray-600 hover:text-blue-500 "
+    }`}
+    onClick={() => setActiveTab("academic")}
+  >
+    Academic
+  </button>
+  <button
+    className={`px-10 py-3 text-lg font-medium transition-all duration-300 rounded-tl-lg rounded-tr-lg ${
+      activeTab === "resources"
+        ? "text-white border-b-4 border-blue-500 font-semibold bg-blue-950"
+        : "text-gray-600 hover:text-blue-500 "
+    }`}
+    onClick={() => setActiveTab("resources")}
+  >
+    Resources
+  </button>
+  <button
+    className={`px-10 py-3 text-lg font-medium transition-all duration-300 rounded-tl-lg rounded-tr-lg ${
+      activeTab === "alumni"
+        ? "text-white border-b-4 border-blue-500 font-semibold bg-blue-950"
+        : "text-gray-600 hover:text-blue-500 "
+    }`}
+    onClick={() => setActiveTab("alumni")}
+  >
+    Alumni
+  </button>
+</div>
+    
+ 
+      {/* Academic Details */}
+        {activeTab === "academic" && (
+          
+    <div className="bg-white shadow-lg shadow-gray-400 p-6 rounded-lg w-[80%] mx-auto">
+      {/* Academic Details Heading with Icon */}
+      <div className="flex items-center bg-blue-950 text-white rounded-t-lg py-3 px-6 w-full mb-4">
+        <FaGraduationCap className="text-2xl mr-3" />
+        <h2 className="text-xl font-bold">Academic Details</h2>
+      </div>
+
+      <div className="grid grid-cols-2 gap-6">
+        {/* CGPA Field with Icon */}
+        <div>
+          <div className="flex items-center mb-2">
+            <FaChartLine className="text-blue-950 mr-2" />
+            <label className="block text-gray-600 font-medium">CGPA</label>
+          </div>
+          <input
+            type="text"
+            name="cgpa"
+            value={user.cgpa}
+            onChange={handleInputChange}
+            disabled={!isEditing}
+            className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500 transition duration-300"
+          />
+        </div>
+
+        {/* academic year Field with Icon */}
+        <div>
+          <div className="flex items-center mb-2">
+            <FaCalendar className="text-blue-950 mr-2" />
+            <label className="block text-gray-600 font-medium">Academic Year</label>
+          </div>
+          <input
+            type="text"
+            name="academicYear"
+            value={user.academicYear}
+            onChange={handleInputChange}
+            disabled={!isEditing}
+            className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500 transition duration-300"
+          />
+        </div>
+
+        {/* Backlogs Field with Icon */}
+        <div>
+          <div className="flex items-center mb-2">
+            <FaExclamationCircle className="text-blue-950 mr-2" />
+            <label className="block text-gray-600 font-medium">Backlogs</label>
+          </div>
+          <input
+            type="text"
+            name="backlogs"
+            value={user.backlogs}
+            onChange={handleInputChange}
+            disabled={!isEditing}
+            className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500 transition duration-300"
+          />
+        </div>
+
+        {/* Attendance Field with Icon */}
+        <div>
+          <div className="flex items-center mb-2">
+            <FaPercentage className="text-blue-950 mr-2" />
+            <label className="block text-gray-600 font-medium">Attendance (%)</label>
+          </div>
+          <input
+            type="text"
+            name="attendance"
+            value={user.attendance}
+            onChange={handleInputChange}
+            disabled={!isEditing}
+            className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-500 transition duration-300"
+          />
         </div>
       </div>
 
-      {/* Academic Details Section */}
-      <div className="rounded-lg shadow-md p-6 ml-60 mr-60 border-2 border-[#1a365d] mt-[35px]">
-        <h3 className="text-xl font-semibold flex items-center gap-2 text-[#1a365d]">
-          <IoBookOutline size={24} className="font-bold" /> Academic Details
-        </h3>
-        {["cgpa", "sgpa", "backlogs", "attendance"].map((field, index) => (
-          <div key={index} className="flex justify-between items-center mt-3">
-            <span className="text-gray-600 mt-2 capitalize">{field}</span>
-            {isEditingAcademic ? (
-              <input
-                type="text"
-                name={field}
-                value={academicDetails[field] || ""}
-                onChange={handleAcademicChange}
-                className="rounded-md text-black"
-              />
-            ) : (
-              <span className="font-semibold text-[#1a365d]">
-                {academicDetails[field] || "N/A"}
-              </span>
-            )}
-          </div>
-        ))}
-        {!isEditingAcademic ? (
+      {/* Edit/Save Button */}
+      <div className="mt-6 flex justify-center">
+        {!isEditing ? (
           <button
-            className="mt-4 px-4 py-2 rounded-md font-semibold bg-[#1a365d] hover:bg-blue-700 text-white"
-            onClick={() => setIsEditingAcademic(true)}
+            className="px-6 py-2 bg-blue-500 text-white rounded-md flex items-center hover:bg-blue-600 transition duration-300"
+            onClick={() => setIsEditing(true)}
           >
-            Edit Academic Details
+            <FaEdit className="mr-2" /> Edit
           </button>
         ) : (
           <button
-            className="mt-4 px-4 py-2 rounded-md font-semibold bg-[#EC4899] hover:bg-[#da2f84] text-white"
-            onClick={handleSaveAcademicDetails}
+            className="px-6 py-2 bg-green-500 text-white rounded-md flex items-center hover:bg-green-600 transition duration-300"
+            onClick={handleSave}
           >
-            Save Academic Details
+            <FaSave className="mr-2" /> Save
           </button>
         )}
       </div>
+
+      {/* Horizontal Line */}
+      <hr className="my-6 border-t-2 border-gray-200" />
+
+      {/* Next Steps Section */}
+      <div className="mt-8 flex justify-between items-center">
+        <div>
+          <h3 className="text-2xl font-semibold text-gray-800">Next Steps</h3>
+          <p className="text-lg text-gray-600 mt-2 inline-block">
+            Continue to prepare for upcoming interviews.
+          </p>
+        </div>
+        <div>
+          <button
+            className="px-6 py-2 bg-blue-500 text-white rounded-md flex items-center hover:bg-blue-600 transition duration-300"
+            onClick={() => window.location.href = '/jobs'}
+          >
+            <FaBriefcase className="mr-2" /> View Jobs
+          </button>
+        </div>
+      </div>
+    </div>
+  )}
+
+
+
+
+      {/* Resources Section */}
+      {activeTab === "resources" && (
+  <div className="mt-6 bg-white shadow-md p-6 rounded-lg w-[80%] mx-auto">
+    {/* Horizontal Layout for the Boxes */}
+    <div className="flex space-x-6">
+
+      {/* Placement Resources Box (Larger Box) */}
+      <div className="flex-1 bg-gray-100 p-6 rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold mb-4">Placement Resources</h2>
+
+        {/* Grid Layout for 2 Resources per Row */}
+        <div className="grid grid-cols-2 gap-6">
+          {/* First Resource */}
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold text-gray-800">GeeksForGeeks Interview Questions</h3>
+            <p className="text-gray-600">GeeksForGeeks provides a comprehensive list of interview questions across various tech domains.</p>
+            <button className="mt-2 text-white bg-blue-500 px-4 py-2 rounded-md hover:bg-blue-600 transition duration-200">Access Resource</button>
+          </div>
+
+          {/* Second Resource */}
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold text-gray-800">LeetCode Coding Problems</h3>
+            <p className="text-gray-600">LeetCode offers coding problems categorized by difficulty and company-specific questions.</p>
+            <button className="mt-2 text-white bg-blue-500 px-4 py-2 rounded-md hover:bg-blue-600 transition duration-200">Access Resource</button>
+          </div>
+
+          {/* Third Resource */}
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold text-gray-800">InterviewBit Practice</h3>
+            <p className="text-gray-600">InterviewBit offers a structured learning path and interview preparation tools.</p>
+            <button className="mt-2 text-white bg-blue-500 px-4 py-2 rounded-md hover:bg-blue-600 transition duration-200">Access Resource</button>
+          </div>
+
+          {/* Fourth Resource */}
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold text-gray-800">Apna College DSA Playlist</h3>
+            <p className="text-gray-600">Apna College offers a YouTube playlist focused on DSA topics and interview prep.</p>
+            <button className="mt-2 text-white bg-blue-500 px-4 py-2 rounded-md hover:bg-blue-600 transition duration-200">Access Resource</button>
+          </div>
+        </div>
+      </div>
+
+      {/* Alumni Connect Box (Smaller Box) */}
+      
+
+    </div>
+  </div>
+)}
+
+
+{activeTab === "alumni" && (
+  <div className="mt-6 bg-white shadow-md p-6 rounded-lg w-[80%] mx-auto">
+    <h2 className="text-2xl font-semibold mb-6 text-center">Alumni Connect</h2>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+      {/* First Alumni */}
+      <div className="bg-gray-100 p-6 rounded-lg shadow-lg transition transform hover:scale-105 duration-300 ease-in-out">
+        <h3 className="text-xl font-semibold text-gray-800">Anmol</h3>
+        <p className="text-gray-600">Post: Full Stack Developer</p>
+        <p className="text-gray-600">Company: Infograins</p>
+        <a href="https://www.linkedin.com/in/anmol-jain-8b204823a/" target="_blank" className="text-blue-500 hover:underline mt-2 inline-block">LinkedIn Profile</a>
+      </div>
+
+      {/* Second Alumni */}
+      <div className="bg-gray-100 p-6 rounded-lg shadow-lg transition transform hover:scale-105 duration-300 ease-in-out">
+        <h3 className="text-xl font-semibold text-gray-800">Mahima</h3>
+        <p className="text-gray-600">Post: Backend Developer</p>
+        <p className="text-gray-600">Company: Infograins</p>
+        <a href="https://www.linkedin.com/in/mahima-babani-624184278/" target="_blank" className="text-blue-500 hover:underline mt-2 inline-block">LinkedIn Profile</a>
+      </div>
+
+      {/* Third Alumni */}
+      <div className="bg-gray-100 p-6 rounded-lg shadow-lg transition transform hover:scale-105 duration-300 ease-in-out">
+        <h3 className="text-xl font-semibold text-gray-800">Vansh</h3>
+        <p className="text-gray-600">Post: Frontend Developer</p>
+        <p className="text-gray-600">Company: Infograins</p>
+        <a href="https://www.linkedin.com/in/vansh-khandewal-9575a22a5/" target="_blank" className="text-blue-500 hover:underline mt-2 inline-block">LinkedIn Profile</a>
+      </div>
+
+      {/* Fourth Alumni */}
+      <div className="bg-gray-100 p-6 rounded-lg shadow-lg transition transform hover:scale-105 duration-300 ease-in-out">
+        <h3 className="text-xl font-semibold text-gray-800">Chhavi</h3>
+        <p className="text-gray-600">Post: Cybersecurity Analyst</p>
+        <p className="text-gray-600">Company: Infograins</p>
+        <a href="https://www.linkedin.com/in/chhavi-chaturvedi-b728b1262/" target="_blank" className="text-blue-500 hover:underline mt-2 inline-block">LinkedIn Profile</a>
+      </div>
+    </div>
+  </div>
+)}
+
+
     </div>
   );
 };

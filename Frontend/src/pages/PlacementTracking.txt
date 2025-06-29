@@ -1,0 +1,693 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { FaBriefcase } from 'react-icons/fa';
+import { io } from 'socket.io-client';
+
+const PlacementTracking = () => {
+  const [user, setUser] = useState(null);
+  const [placementStatus, setPlacementStatus] = useState([]);
+  const [loadingPlacement, setLoadingPlacement] = useState(true);
+  const [applications, setApplications] = useState([]);
+
+  useEffect(() => {
+    // Check for stored user in localStorage
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      setUser(storedUser);
+    } else {
+      fetchUserData();
+    }
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const response = await fetch("http://localhost:5000/api/auth/profile", {
+        method: "GET",
+        headers: { "Content-Type": "application/json", Authorization: token },
+      });
+
+      if (!response.ok) {
+        console.error("Failed to fetch user data:", response.statusText);
+        return;
+      }
+
+      const data = await response.json();
+      console.log("User data fetched:", data);  // Log the user data for debugging
+
+      // Ensure data has an _id field
+      if (!data._id) {
+        console.error("No _id field found in user data:", data);
+        return;
+      }
+
+      setUser(data);
+      localStorage.setItem("user", JSON.stringify(data));
+    } catch (error) {
+      console.error("Error fetching profile data:", error.message);
+    }
+  };
+
+  const socketRef = useRef(null);
+
+  useEffect(() => {
+    // Fetch User ID from localStorage (use the actual userId here)
+    const userId = localStorage.getItem("userId"); // Use correct userId key here
+
+    if (!userId) {
+      console.warn("No User ID found, skipping data fetch.");
+      return;
+    }
+
+    console.log("User ID being used:", userId);
+    setLoadingPlacement(true);
+
+    // Fetch Function for Notifications and Applications Data
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.warn("No token found, skipping data fetch.");
+          return;
+        }
+
+        // Fetch User Applications
+        const applicationsRes = await fetch(
+          `http://localhost:5000/api/admin/get-user-applications/${userId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: ` ${token}`,
+            },
+          }
+        );
+
+        if (!applicationsRes.ok) {
+          throw new Error(
+            `Applications Fetch Error: ${applicationsRes.status} ${applicationsRes.statusText}`
+          );
+        }
+
+        const applicationsData = await applicationsRes.json();
+        setApplications(applicationsData.applications);
+
+        console.log("Applications API Response:", applicationsData);
+
+        // Fetch Placement Tracking Data Directly
+        const placementRes = await fetch(
+          `http://localhost:5000/api/jobs/placement-status/${userId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: ` ${token}`,
+            },
+          }
+        );
+
+        if (!placementRes.ok) {
+          throw new Error(
+            `Placement Tracking Fetch Error: ${placementRes.status} ${placementRes.statusText}`
+          );
+        }
+
+        const placementData = await placementRes.json();
+        console.log("Placement Tracking Data Fetched:", placementData);
+
+        setPlacementStatus(placementData.length > 0 ? placementData : []);
+
+        // Save Placement Status in Local Storage
+        localStorage.setItem("placementStatus", JSON.stringify(placementData));
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoadingPlacement(false);
+      }
+    };
+
+    // Fetch data when the component mounts
+    fetchData();
+
+    // Get placement status from local storage if available
+    const storedPlacementStatus = localStorage.getItem("placementStatus");
+    if (storedPlacementStatus) {
+      setPlacementStatus(JSON.parse(storedPlacementStatus));
+    }
+
+    // Cleanup old socket connection before setting a new one
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+      console.log("Existing socket disconnected.");
+    }
+
+    // Re-establish the WebSocket connection
+    const socket = io("http://localhost:5000"); // Backend URL
+    socketRef.current = socket; // Store socket instance in the ref
+
+    // Listen for real-time placement status updates using Socket.IO
+    const handleSocketUpdates = (data) => {
+      console.log("Received real-time placement update for job:", data.jobId);
+
+      // Only update the status if it isn't already reflected in localStorage
+      setPlacementStatus((prevState) => {
+        const updatedStatus = prevState.map((placement) =>
+          placement.jobId === data.jobId
+            ? { ...placement, status: "Interview Scheduled" }
+            : placement
+        );
+
+        // Save updated status to localStorage
+        localStorage.setItem("placementStatus", JSON.stringify(updatedStatus));
+
+        return updatedStatus;
+      });
+    };
+
+    socket.on("updatePlacementStatus", handleSocketUpdates);
+
+    // Cleanup the socket connection when the component unmounts or user changes
+    return () => {
+      if (socketRef.current) {
+        console.log("Cleaning up socket connection");
+        socketRef.current.off("updatePlacementStatus"); // Remove the listener
+        socketRef.current.disconnect(); // Disconnect socket
+        socketRef.current = null; // Clear socket instance from the ref
+      }
+    };
+  }, []);  // Empty dependency array ensures this only runs once on mount
+
+  return (
+    <div>
+      <div className="px-10 py-8 w-2/3 rounded-lg bg-gradient-to-br from-white to-gray-100 shadow-lg mt-6 mb-6 border border-[#1a365d]">
+        <div className="flex items-center border-b pb-3 border-gray-300">
+          <FaBriefcase size={28} className="text-[#1a365d] mr-3" />
+          <h2 className="text-2xl font-extrabold text-[#1a365d] tracking-wide">Placement Tracking Status</h2>
+        </div>
+
+        {loadingPlacement ? (
+          <p className="text-center text-gray-500 mt-5 animate-pulse text-lg font-medium">Loading placement status...</p>
+        ) : placementStatus && placementStatus.length > 0 ? (
+          <div className="flex flex-col space-y-4 mt-6">
+            {placementStatus.map((job, index) => (
+              <div key={index} className="flex items-center justify-between w-full p-5 border border-[#1a365d] rounded-xl shadow-md bg-white transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
+                <div className="w-1/3">
+                  <p className="text-sm text-[#1a365d] font-bold uppercase">Company</p>
+                  <p className="text-[#1a365d] text-lg font-semibold">{job.companyName}</p>
+                </div>
+
+                <div className="w-1/3">
+                  <p className="text-sm text-[#1a365d] font-bold uppercase">Job Title</p>
+                  <p className="text-[#1a365d] text-lg font-semibold">{job.jobTitle}</p>
+                </div>
+
+                <div className="w-1/3 text-center">
+                  <p className="text-sm mb-1 text-[#1a365d] font-bold uppercase">Status</p>
+                  <p
+                    className={`inline-block font-bold text-md tracking-wide px-4 py-1 rounded-md 
+                      ${job.status === "Completed" ? "text-pink-500 bg-pink-100" :
+                        job.status === "Interview Scheduled" ? "text-blue-600 bg-blue-100" :
+                          "text-orange-500 bg-orange-100"
+                      }`}
+                  >
+                    {job.status}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-gray-500 mt-5 text-lg font-medium">No placement records found.</p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default PlacementTracking;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { useState, useEffect, useRef } from 'react';
+import { FaBriefcase, FaClipboardList, FaCheckCircle } from 'react-icons/fa';
+import { motion } from "framer-motion";
+import { io } from 'socket.io-client';
+
+const PlacementTracking = () => {
+  const [user, setUser] = useState(null);
+  const [placementStatus, setPlacementStatus] = useState([]);
+  const [loadingPlacement, setLoadingPlacement] = useState(true);
+  const [applications, setApplications] = useState([]);
+  const [applicationsCount, setApplicationsCount] = useState(0);  // To store the number of applications
+
+  useEffect(() => {
+    // Check for stored user in localStorage
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      setUser(storedUser);
+      setApplicationsCount(storedUser.applications || 0); // Set the number of applications from stored user data
+    } else {
+      fetchUserData();
+    }
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const response = await fetch("http://localhost:5000/api/auth/profile", {
+        method: "GET",
+        headers: { "Content-Type": "application/json", Authorization: token },
+      });
+
+      if (!response.ok) {
+        console.error("Failed to fetch user data:", response.statusText);
+        return;
+      }
+
+      const data = await response.json();
+      console.log("User data fetched:", data);
+
+      // Ensure data has an _id field
+      if (!data._id) {
+        console.error("No _id field found in user data:", data);
+        return;
+      }
+
+      setUser(data);
+      setApplicationsCount(data.applications || 0);  // Set the number of applications
+      localStorage.setItem("user", JSON.stringify(data));
+    } catch (error) {
+      console.error("Error fetching profile data:", error.message);
+    }
+  };
+
+  const socketRef = useRef(null);
+
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) {
+      console.warn("No User ID found, skipping data fetch.");
+      return;
+    }
+
+    console.log("User ID being used:", userId);
+    setLoadingPlacement(true);
+
+    // Fetch Function for Notifications and Applications Data
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.warn("No token found, skipping data fetch.");
+          return;
+        }
+
+        // Fetch the applications data (make sure this API is working)
+        const applicationsRes = await fetch(
+          `http://localhost:5000/api/admin/get-user-applications/${userId}`,
+          {
+            headers: { "Content-Type": "application/json", Authorization: token },
+          }
+        );
+
+        if (!applicationsRes.ok) {
+          throw new Error("Failed to fetch applications data");
+        }
+
+        const applicationsData = await applicationsRes.json();
+        setApplications(applicationsData.applications);
+        setApplicationsCount(applicationsData.applications.length); // Update the applications count
+
+        console.log("Applications API Response:", applicationsData);
+
+        // Fetch Placement Tracking Data Directly
+        const placementRes = await fetch(
+          `http://localhost:5000/api/jobs/placement-status/${userId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: ` ${token}`,
+            },
+          }
+        );
+
+        if (!placementRes.ok) {
+          throw new Error(
+            `Placement Tracking Fetch Error: ${placementRes.status} ${placementRes.statusText}`
+          );
+        }
+
+        const placementData = await placementRes.json();
+        console.log("Placement Tracking Data Fetched:", placementData);
+
+        setPlacementStatus(placementData.length > 0 ? placementData : []);
+
+        // Save Placement Status in Local Storage
+        localStorage.setItem("placementStatus", JSON.stringify(placementData));
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoadingPlacement(false);
+      }
+    };
+
+    // Fetch data when the component mounts
+    fetchData();
+
+    // Get placement status from local storage if available
+    const storedPlacementStatus = localStorage.getItem("placementStatus");
+    if (storedPlacementStatus) {
+      setPlacementStatus(JSON.parse(storedPlacementStatus));
+    }
+
+    // Cleanup old socket connection before setting a new one
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+      console.log("Existing socket disconnected.");
+    }
+
+    // Re-establish the WebSocket connection
+    const socket = io("http://localhost:5000"); // Backend URL
+    socketRef.current = socket; // Store socket instance in the ref
+
+    // Listen for real-time placement status updates using Socket.IO
+    const handleSocketUpdates = (data) => {
+      console.log("Received real-time placement update for job:", data.jobId);
+
+      // Only update the status if it isn't already reflected in localStorage
+      setPlacementStatus((prevState) => {
+        const updatedStatus = prevState.map((placement) =>
+          placement.jobId === data.jobId
+            ? { ...placement, status: "Interview Scheduled" }
+            : placement
+        );
+
+        // Save updated status to localStorage
+        localStorage.setItem("placementStatus", JSON.stringify(updatedStatus));
+
+        return updatedStatus;
+      });
+    };
+
+    socket.on("updatePlacementStatus", handleSocketUpdates);
+
+    // Cleanup the socket connection when the component unmounts or user changes
+    return () => {
+      if (socketRef.current) {
+        console.log("Cleaning up socket connection");
+        socketRef.current.off("updatePlacementStatus"); // Remove the listener
+        socketRef.current.disconnect(); // Disconnect socket
+        socketRef.current = null; // Clear socket instance from the ref
+      }
+    };
+  }, []);  // Empty dependency array ensures this only runs once on mount
+
+  return (
+    <div>
+      <div className="pt-14 bg-gradient-to-r from-[#243b53] to-[#486581] h-80 m-5 border rounded-2xl">
+        <p className="text-5xl mb-3 text-center font-bold mt-6 text-white">My Applications</p>
+        <p className="text-white text-[35px] w-[93%] mx-auto text-center  font-normal mb-3 ">(
+          {applicationsCount} {applicationsCount === 1 ? '' : 's'})
+        </p>
+      </div>
+
+     
+      <div className="px-8 py-8 w-full lg:w-2/3 mx-auto bg-gradient-to-r from-gray-100 to-gray-200 shadow-md rounded-lg mt-8 mb-8">
+  {/* Header Section */}
+  <motion.div
+    className="flex items-center justify-between mb-6"
+    initial={{ opacity: 0, y: -20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+  >
+    <div className="flex items-center space-x-3">
+      <FaBriefcase size={30} className="text-gray-600" />
+      <h2 className="text-2xl font-semibold text-gray-800">Placement Tracking</h2>
+    </div>
+  </motion.div>
+
+  {/* Placement Status Section */}
+  <motion.div
+    className="space-y-6"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.6, delay: 0.2 }}
+  >
+    {placementStatus && placementStatus.length > 0 ? (
+      placementStatus.map((job, index) => (
+        <motion.div
+          key={index}
+          className="flex justify-between items-center p-6 bg-white shadow-md rounded-lg border border-gray-300 hover:border-gray-400 transition-all duration-300"
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <div className="w-2/5">
+            <p className="text-sm text-gray-500 font-semibold">Company</p>
+            <p className="text-gray-700 text-lg">{job.companyName}</p>
+          </div>
+          
+          <div className="w-2/5">
+            <p className="text-sm text-gray-500 font-semibold">Job Title</p>
+            <p className="text-gray-700 text-lg">{job.jobTitle}</p>
+          </div>
+          
+          <div className="w-1/5 text-center">
+            <p className="text-sm text-gray-500 font-semibold">Status</p>
+            <p
+              className={`text-sm font-medium py-1 px-4 rounded-lg ${job.status === 'Completed' ? 'bg-green-100 text-green-600' :
+                job.status === 'Interview Scheduled' ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600'}`}
+            >
+              {job.status}
+            </p>
+          </div>
+        </motion.div>
+      ))
+    ) : (
+      <p className="text-center text-gray-500 mt-5 text-lg font-medium">No placement records found.</p>
+    )}
+  </motion.div>
+</div>
+
+    </div>
+  );
+};
+
+export default PlacementTracking;
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { useState, useEffect, useRef } from "react";
+import { RiGraduationCapLine } from "react-icons/ri";
+import { FaUserCircle } from "react-icons/fa"; // Modern profile icon
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { showSuccessToast } from "../utils/toast";
+
+const Navbar = ({ isAuthenticated, setAuthState }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [isAuth, setIsAuth] = useState(isAuthenticated);
+  const [jobDropdownOpen, setJobDropdownOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
+  const jobDropdownRef = useRef(null);
+  const profileDropdownRef = useRef(null);
+
+  useEffect(() => {
+    setIsAuth(isAuthenticated);
+  }, [isAuthenticated]);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    setAuthState(false);
+    setIsAuth(false);
+    showSuccessToast("Logged out successfully");
+    navigate("/");
+    window.location.reload();
+  };
+
+  // Prevent dropdown from closing when clicking inside it
+  const handleJobDropdownClick = (e) => {
+    e.stopPropagation(); // Prevent closing of dropdown
+  };
+
+  const handleProfileDropdownClick = (e) => {
+    e.stopPropagation(); // Prevent closing of dropdown
+  };
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        jobDropdownRef.current &&
+        !jobDropdownRef.current.contains(event.target)
+      ) {
+        setJobDropdownOpen(false);
+      }
+      if (
+        profileDropdownRef.current &&
+        !profileDropdownRef.current.contains(event.target)
+      ) {
+        setProfileDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <nav className="bg-white shadow-md fixed top-0 left-0 w-full z-50 transition-all duration-300 h-16 flex items-center">
+      <div className="container mx-auto flex justify-between items-center px-6">
+        {/* Logo */}
+        <div
+          className="flex items-center space-x-2 text-[#1A365D] mr-2 hover:text-[#496c9c] font-semibold text-lg cursor-pointer transition duration-300"
+          onClick={() => navigate("/")}
+        >
+          <RiGraduationCapLine size={28} />
+          <span className="text-xl font-bold">Poornima Placement</span>
+        </div>
+
+        {/* Navigation Links */}
+        <ul className="hidden md:flex space-x-6 items-center mr-3">
+          {[{ name: "Home", path: "/" }, { name: "About", path: "/about" }]
+            .map(({ name, path }) => (
+              <li key={path}>
+                <Link
+                  to={path}
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition duration-300 ${
+                    location.pathname === path
+                      ? "bg-[#1A365D] text-white shadow-md"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  {name}
+                </Link>
+              </li>
+            ))}
+
+          {/* Jobs Dropdown - 3rd item */}
+          <li
+            className="relative"
+            ref={jobDropdownRef}
+            onClick={handleJobDropdownClick} // Prevent click from closing the dropdown
+          >
+            <button
+              onClick={() => setJobDropdownOpen(!jobDropdownOpen)}
+              className="px-4 py-2 rounded-lg text-sm font-semibold text-gray-600 hover:text-gray-900 transition duration-300 flex items-center"
+            >
+              Jobs
+              <span className="ml-1 text-xs">⮟</span> {/* Dropdown arrow */}
+            </button>
+            {jobDropdownOpen && (
+              <ul className="absolute left-0 bg-white shadow-xl rounded-lg mt-2 w-44 z-50 border py-2 transition-all duration-200 opacity-100 transform scale-100">
+                {[{ name: "Saved Jobs", path: "/saved-jobs" }, { name: "Search Jobs", path: "/jobs" }, { name: "My Applications", path: "/placement-tracking" }]
+                  .map(({ name, path }) => (
+                    <li key={path}>
+                      <Link
+                        to={path}
+                        className="block px-4 py-2 hover:bg-gray-100 transition duration-200"
+                        onClick={() => setJobDropdownOpen(false)} // Close dropdown after selecting an option
+                      >
+                        {name}
+                      </Link>
+                    </li>
+                  ))}
+              </ul>
+            )}
+          </li>
+
+          {/* Statistics - 4th item */}
+          <li>
+            <Link
+              to="/statistics"
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition duration-300 ${
+                location.pathname === "/statistics"
+                  ? "bg-[#1A365D] text-white shadow-md"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              Statistics
+            </Link>
+          </li>
+
+          {/* Profile Dropdown */}
+          {isAuth ? (
+            <li
+              className="relative"
+              ref={profileDropdownRef}
+              onClick={handleProfileDropdownClick} // Prevent click from closing the dropdown
+            >
+              <button
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                className="text-gray-600 hover:text-gray-900 transition duration-300 flex items-center"
+              >
+                <FaUserCircle size={26} /> {/* Using FaUserCircle as profile icon */}
+              </button>
+              {profileDropdownOpen && (
+                <ul className="absolute right-0 bg-white shadow-xl rounded-lg mt-2 w-32 z-50 border py-2 transition-all duration-200 opacity-100 transform scale-100">
+                  <li>
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2 hover:bg-gray-100 transition duration-200"
+                      onClick={() => setProfileDropdownOpen(false)} // Close dropdown after selecting an option
+                    >
+                      Profile
+                    </Link>
+                  </li>
+                  <li>
+                    <button
+                      onClick={handleLogout}
+                      className="block px-4 py-2 w-full text-left hover:bg-gray-100 transition duration-200"
+                    >
+                      Logout
+                    </button>
+                  </li>
+                  
+                </ul>
+              )}
+            </li>
+          ) : (
+            <li>
+              <Link
+                to="/login"
+                className="px-5 py-2 rounded-lg text-sm font-semibold bg-[#1A365D] text-white hover:bg-gray-900 transition duration-300 shadow-md"
+              >
+                Login
+              </Link>
+            </li>
+          )}
+        </ul>
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;

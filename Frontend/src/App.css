@@ -1,5 +1,35 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-@import "tailwindcss";
+body {
+    font-family: 'Poppins', sans-serif;
+    padding-top: 64px;
+}
+
+
+/* Minimal sleek scrollbar (only line visible) */
+.slim-scroll::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .slim-scroll::-webkit-scrollbar-track {
+    background: transparent;  /* Hides the white/gray background */
+  }
+  
+  .slim-scroll::-webkit-scrollbar-thumb {
+    background-color: #003366;  /* Just the visible line */
+    border-radius: 10px;
+  }
+  
+  /* Firefox */
+  .slim-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #fff transparent;
+  }
+  
+  
+
+
+
+body.admin-panel {
+    padding-top: 0;
+}

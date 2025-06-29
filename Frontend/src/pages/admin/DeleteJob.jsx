@@ -46,6 +46,7 @@ const DeleteJob = () => {
         onChange={(e) => setJobId(e.target.value)}
       />
       <button className="bg-red-500 text-white px-4 py-2" onClick={handleDelete}>Delete Job</button>
+      <button></button>
     </div>
   );
 };

@@ -1,23 +1,24 @@
-// module.exports = {
-//     theme: {
-//       extend: {
-//         animation: {
-//           float: "float 3s ease-in-out infinite",
-//         },
-//         keyframes: {
-//           float: {
-//             "0%, 100%": { transform: "translateY(0)" },
-//             "50%": { transform: "translateY(-10px)" },
-//           },
-//         },
-//       },
-//     },
-//   };
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: ["./src/**/*.{html,js,jsx,ts,tsx}"],
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: "#4F46E5",
+        secondary: "#6B7280",
+        accent: "#F59E0B",
+      },
+      fontFamily: {
+        poppins: ["Poppins", "sans-serif"], // Add Poppins
+      },
+      boxShadow: {
+        soft: "0 4px 6px rgba(0, 0, 0, 0.1)",
+        strong: "0 6px 10px rgba(0, 0, 0, 0.15)",
+      },
+    },
   },
-  plugins: [require("tailwind-scrollbar-hide")], // Ensure this is correctly added
+  plugins: [],
 };
