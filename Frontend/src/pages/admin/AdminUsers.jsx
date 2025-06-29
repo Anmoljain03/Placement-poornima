@@ -18,9 +18,12 @@ const AdminUsers = () => {
           return;
         }
 
-        const response = await fetch("http://localhost:5000/api/admin/users", {
-          headers: { Authorization: `${token}` },
-        });
+     const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/admin/users`, {
+  headers: {
+    Authorization: `${token}`,
+  },
+});
+
 
         if (!response.ok) throw new Error("Failed to fetch users");
         const data = await response.json();
@@ -41,8 +44,8 @@ const AdminUsers = () => {
 
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:5000/api/admin/users/${userId}/toggle-fee-paid`,
-        {
+  `${import.meta.env.VITE_LIVE_URL}/api/admin/users/${userId}/toggle-fee-paid`,
+          {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",

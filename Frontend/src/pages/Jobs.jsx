@@ -21,11 +21,11 @@ const Jobs = () => {
   const [isDeptOpen, setIsDeptOpen] = useState(false);
   const [isDurationOpen, setIsDurationOpen] = useState(false);
   const [feePaid, setFeePaid] = useState(true);
-  const [appliedJobs, setAppliedJobs] = useState([]); 
+  const [appliedJobs, setAppliedJobs] = useState([]);
   const [sortBy, setSortBy] = useState("Recommended");
   console.log("Jobs Data:", jobs);
 
-  const department = ["BCA", "BTech", "MCA", "MBA","BBA"];
+  const department = ["BCA", "BTech", "MCA", "MBA", "BBA"];
   const duration = ["Full Time", "Part Time", "Internship"];
 
   const userId = localStorage.getItem("userId");
@@ -35,7 +35,7 @@ const Jobs = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/jobs");
+        const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/jobs`);
         if (!response.ok) throw new Error("Failed to fetch jobs");
         const data = await response.json();
         setJobs(data);
@@ -47,7 +47,7 @@ const Jobs = () => {
     };
 
 
-    
+
 
     const fetchUserDetails = async () => {
       const token = localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -58,7 +58,7 @@ const Jobs = () => {
       }
 
       try {
-        const res = await fetch("http://localhost:5000/api/auth/profile", {
+        const res = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/auth/profile`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -81,70 +81,70 @@ const Jobs = () => {
 
   const handleApplyClick = async (jobId) => {
     const userId = localStorage.getItem("userId");
-  
+
     if (!userId) {
       console.error("User ID not found. Ensure the user is logged in.");
       return;
     }
-  
+
     console.log("Applying for job with User ID:", userId);
-  
+
     await applyForJob(userId, jobId);
   };
-  
-  
+
+
 
   const applyForJob = async (userId, jobId) => {
     if (!userId) {
-        console.error(" User ID is missing!");
-        return;
+      console.error(" User ID is missing!");
+      return;
     }
 
     try {
-        const response = await fetch(`http://localhost:5000/api/jobs/apply`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `${localStorage.getItem("token")}`,
-            },
-            body: JSON.stringify({ userId, jobId }),
-        });
+      const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/jobs/apply`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ userId, jobId }),
+      });
 
-        const data = await response.json();
-        console.log("Job Application Response:", data);
+      const data = await response.json();
+      console.log("Job Application Response:", data);
 
-        if (response.ok) {
-            alert("Application Submitted!");
-        } else {
-            console.error("Error submitting application:", data.message);
-        }
+      if (response.ok) {
+        alert("Application Submitted!");
+      } else {
+        console.error("Error submitting application:", data.message);
+      }
     } catch (error) {
-        console.error("API Call Error:", error);
+      console.error("API Call Error:", error);
     }
-};
+  };
 
-useEffect(() => {
-  fetch(`http://localhost:5000/api/jobs/applied/${userId}`, {
-    headers: {
-      Authorization: localStorage.getItem("token"),
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log("Fetched applied jobs:", data);
-      setAppliedJobs(data.applications.map((app) => app.jobId)); // ✅ Extract job IDs
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_LIVE_URL}/api/jobs/applied/${userId}`, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
     })
-    .catch((err) => console.error("Error fetching applied jobs:", err));
-}, [userId]);
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Fetched applied jobs:", data);
+        setAppliedJobs(data.applications.map((app) => app.jobId)); // ✅ Extract job IDs
+      })
+      .catch((err) => console.error("Error fetching applied jobs:", err));
+  }, [userId]);
 
 
-const isDeadlinePassed = (deadline) => {
-  const currentDate = new Date();
-  const jobDeadline = new Date(deadline);
-  return currentDate > jobDeadline;
-};
+  const isDeadlinePassed = (deadline) => {
+    const currentDate = new Date();
+    const jobDeadline = new Date(deadline);
+    return currentDate > jobDeadline;
+  };
 
-// dropdown checkbox filter
+  // dropdown checkbox filter
 
   //  **Filter Jobs Based on Search & Dropdowns**
   const filteredJobs = jobs.filter((job) => {
@@ -152,65 +152,65 @@ const isDeadlinePassed = (deadline) => {
     const jobTitle = job.jobTitle?.toLowerCase() || "";
     const companyName = job.companyName?.toLowerCase() || "";
     const location = job.jobLocation?.toLowerCase() || "";
-  
+
     // 🔹 Condition: Search Query Matching (Job Title, Company, Location)
     const matchesSearch = jobTitle.includes(query) || companyName.includes(query) || location.includes(query);
-  
+
     // 🔹 Ensure selectedDepartments & selectedDurations are arrays
     const selectedDeptArray = Array.isArray(selectedDepartments) ? selectedDepartments : [];
     const selectedDurArray = Array.isArray(selectedDurations) ? selectedDurations : [];
-  
+
     // 🔹 Convert job's department and duration into arrays for comparison
     const jobDeptArray = job.department ? job.department.split(",").map((d) => d.trim().toUpperCase()) : [];
     const jobDurArray = job.duration ? job.duration.split(",").map((d) => d.trim().toUpperCase()) : [];
-  
+
     // 🔹 Condition: Department Matching (Should match at least one selected department)
     const matchesDepartment =
       selectedDeptArray.length === 0 ||
       selectedDeptArray.some((dept) => jobDeptArray.includes(dept.toUpperCase()));
-  
+
     // 🔹 Condition: Duration Matching (Should match at least one selected duration)
     const matchesDuration =
       selectedDurArray.length === 0 ||
       selectedDurArray.some((dur) => jobDurArray.includes(dur.toUpperCase()));
-  
+
     // 🔹 Return only jobs that match **both** department & duration conditions
     return matchesSearch && matchesDepartment && matchesDuration;
   });
-  
+
   console.log("Filtered Jobs:", filteredJobs);
 
 
-// Handle sorting change
-const handleSortChange = (event) => {
-  setSortBy(event.target.value);
-  if (event.target.value === "Date Posted") {
+  // Handle sorting change
+  const handleSortChange = (event) => {
+    setSortBy(event.target.value);
+    if (event.target.value === "Date Posted") {
       setJobs([...jobs].sort((a, b) => new Date(b.postedAt) - new Date(a.postedAt)));
-  }
-};
+    }
+  };
 
-const clearFilters = () => {
-  setSelectedDurations([]);
-  setSelectedDepartments([]);
-};
+  const clearFilters = () => {
+    setSelectedDurations([]);
+    setSelectedDepartments([]);
+  };
 
 
-    // ✅ Checkbox handle function
-    const handleDepartmentChange = (dept) => {
-      setSelectedDepartments((prev) =>
-        prev.includes(dept) ? prev.filter((d) => d !== dept) : [...prev, dept]
-      );
-    };
-    
-    const handleDurationChange = (dur) => {
-      setSelectedDurations((prev) =>
-        prev.includes(dur) ? prev.filter((d) => d !== dur) : [...prev, dur]
-      );
-    };
+  // ✅ Checkbox handle function
+  const handleDepartmentChange = (dept) => {
+    setSelectedDepartments((prev) =>
+      prev.includes(dept) ? prev.filter((d) => d !== dept) : [...prev, dept]
+    );
+  };
+
+  const handleDurationChange = (dur) => {
+    setSelectedDurations((prev) =>
+      prev.includes(dur) ? prev.filter((d) => d !== dur) : [...prev, dur]
+    );
+  };
 
 
   return (
-<div className="bg-[#f8f9fa] min-h-screen flex flex-col">
+    <div className="bg-[#f8f9fa] min-h-screen flex flex-col">
       <div className="pt-16 bg-[#011e39] md:h-96 mx-2 md:mx-5 mt-2 border rounded-2xl px-4">
         <motion.p
           className="text-2xl sm:text-4xl md:text-5xl text-center font-bold text-white mt-4"
@@ -252,29 +252,29 @@ const clearFilters = () => {
         <p className="text-center mt-3 text-sm font-medium text-[#333030]">
           Explore: Job Location, Job Title, Company Name
         </p>
+      </div>
+      <div className="p-5">
+        <div className="flex flex-wrap justify-center sm:justify-start gap-3 ml-4 mt-16">
+          <button className="border border-gray-500 px-4 py-2 font-medium rounded flex items-center">
+            <span className="mr-2">⚙️</span> All Filters
+          </button>
+          <button
+            onClick={clearFilters}
+            className="border border-gray-500 px-4 py-2 font-medium rounded flex items-center"
+          >
+            <span className="mr-2 text-[#033f94]">❌</span> Clear Filters
+          </button>
+          <select
+            className="border border-gray-500 px-4 py-2 rounded"
+            value={sortBy}
+            onChange={handleSortChange}
+          >
+            <option value="Recommended">Recommended</option>
+            <option value="Date Posted">Date Posted</option>
+          </select>
         </div>
-        <div className="p-5">
-          <div className="flex flex-wrap justify-center sm:justify-start gap-3 ml-4 mt-16">
-            <button className="border border-gray-500 px-4 py-2 font-medium rounded flex items-center">
-              <span className="mr-2">⚙️</span> All Filters
-            </button>
-            <button
-              onClick={clearFilters}
-              className="border border-gray-500 px-4 py-2 font-medium rounded flex items-center"
-            >
-              <span className="mr-2 text-[#033f94]">❌</span> Clear Filters
-            </button>
-            <select
-              className="border border-gray-500 px-4 py-2 rounded"
-              value={sortBy}
-              onChange={handleSortChange}
-            >
-              <option value="Recommended">Recommended</option>
-              <option value="Date Posted">Date Posted</option>
-            </select>
-          </div>
-        </div>
-      
+      </div>
+
 
       <div className="w-full max-w-[1440px] mx-auto px-4 md:px-10 flex flex-col lg:flex-row gap-10 mt-10 mb-10">
         {/* Filters Section */}
@@ -402,17 +402,16 @@ const clearFilters = () => {
                     disabled={!feePaid || appliedJobs.includes(job._id) || isDeadlinePassed(job.deadline)}
                     onClick={() => navigate(`/apply/${job._id}`)}
                     whileHover={{ scale: !feePaid || isDeadlinePassed(job.deadline) || appliedJobs.includes(job._id) ? 1 : 1.05 }}
-                    className={`px-6 py-2 rounded-xl font-semibold transition-all duration-300 shadow-md ${
-                      !feePaid || isDeadlinePassed(job.deadline) || appliedJobs.includes(job._id)
-                        ? "bg-gray-400 text-gray-700 cursor-not-allowed"
-                        : "bg-[#1a365d] text-white hover:bg-[#3b5069]"
-                    }`}
+                    className={`px-6 py-2 rounded-xl font-semibold transition-all duration-300 shadow-md ${!feePaid || isDeadlinePassed(job.deadline) || appliedJobs.includes(job._id)
+                      ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+                      : "bg-[#1a365d] text-white hover:bg-[#3b5069]"
+                      }`}
                   >
                     {isDeadlinePassed(job.deadline)
                       ? "Deadline Passed"
                       : appliedJobs.includes(job._id)
-                      ? "Applied"
-                      : "Apply Now"}
+                        ? "Applied"
+                        : "Apply Now"}
                   </motion.button>
                 </div>
               </motion.div>
@@ -422,8 +421,8 @@ const clearFilters = () => {
           )}
         </div>
       </div>
-      </div>
-     
+    </div>
+
   );
 };
 

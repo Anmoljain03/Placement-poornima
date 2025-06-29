@@ -30,67 +30,70 @@ const Login = ({ setAuthState }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-        const response = await axios.post("http://localhost:5000/api/auth/login", formData);
+      const response = await axios.post(`${import.meta.env.VITE_LIVE_URL}/api/auth/login`,
+        formData);
 
-        // Store the correct user ID
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("userId", response.data.user._id);
-
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-        localStorage.setItem("auth", JSON.stringify({ isAuthenticated: true }));
-
-        setAuthState(true);
-        showSuccessToast("Login Successful");
-        navigate("/profile");
-    } catch (error) {
-        showErrorToast(error.response?.data?.message || "Login Failed");
-    }
-};
-;
-
-  const handleSendOtp = async () => {
-    if (!email) {
-        showErrorToast("Please enter your email!");
-        return;
-    }
-    
-    try {
-        const response = await axios.post("http://localhost:5000/api/auth/send-otp", { email });
-        
-        if (response.data.success) {
-            setOtpSent(true);
-            showSuccessToast("OTP sent successfully!");
-        } else {
-            showErrorToast(response.data.message || "Failed to send OTP");
-        }
-    } catch (error) {
-        showErrorToast(error.response?.data?.message || "Error sending OTP");
-    }
-};
-
-const handleOtpVerification = async () => {
-  try {
-    const response = await axios.post("http://localhost:5000/api/auth/verify-otp", {
-      email,
-      otp,
-    });
-
-    if (response.data.token) {
-      showSuccessToast("OTP Verified! Login Successful");
-
-      // Store authentication details
+      // Store the correct user ID
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("userId", response.data.user._id);
+
+      localStorage.setItem("user", JSON.stringify(response.data.user));
       localStorage.setItem("auth", JSON.stringify({ isAuthenticated: true }));
 
       setAuthState(true);
-      navigate("/profile"); // Redirect user after successful OTP verification
-    } else {
-      showErrorToast(response.data.message || "Invalid OTP. Please try again.");
+      showSuccessToast("Login Successful");
+      navigate("/profile");
+    } catch (error) {
+      showErrorToast(error.response?.data?.message || "Login Failed");
     }
-  } catch (error) {
-    showErrorToast(error.response?.data?.message || "OTP Verification Failed");
-  }
-};
+  };
+  ;
+
+  const handleSendOtp = async () => {
+    if (!email) {
+      showErrorToast("Please enter your email!");
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_LIVE_URL}/api/auth/send-otp`,
+        { email });
+
+      if (response.data.success) {
+        setOtpSent(true);
+        showSuccessToast("OTP sent successfully!");
+      } else {
+        showErrorToast(response.data.message || "Failed to send OTP");
+      }
+    } catch (error) {
+      showErrorToast(error.response?.data?.message || "Error sending OTP");
+    }
+  };
+
+  const handleOtpVerification = async () => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_LIVE_URL}/api/auth/verify-otp`,
+        {
+          email,
+          otp,
+        });
+
+      if (response.data.token) {
+        showSuccessToast("OTP Verified! Login Successful");
+
+        // Store authentication details
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("auth", JSON.stringify({ isAuthenticated: true }));
+
+        setAuthState(true);
+        navigate("/profile"); // Redirect user after successful OTP verification
+      } else {
+        showErrorToast(response.data.message || "Invalid OTP. Please try again.");
+      }
+    } catch (error) {
+      showErrorToast(error.response?.data?.message || "OTP Verification Failed");
+    }
+  };
 
 
 
@@ -105,25 +108,25 @@ const handleOtpVerification = async () => {
           <span className="text-lg font-bold">Poornima Placements</span>
         </div>
         <div className="mt-6 space-y-6">
-        <h1 className="text-md font-bold text-white leading-tight mt-1 ml-0">Discover Your <span className="text-red-400">Dream Carrer</span></h1>              <p className="text-white/80 text-lg">Access personalized job opportunities from top companies tailored to your skills and aspirations</p>
+          <h1 className="text-md font-bold text-white leading-tight mt-1 ml-0">Discover Your <span className="text-red-400">Dream Carrer</span></h1>              <p className="text-white/80 text-lg">Access personalized job opportunities from top companies tailored to your skills and aspirations</p>
           <div className="space-y-6">
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 transform hover:scale-105 transition-transform duration-300 border border-white/10 shadow-lg">
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 transform hover:scale-105 transition-transform duration-300 border border-white/10 shadow-lg">
               <div className="flex space-x-4">
                 <FiBriefcase className="h-8 w-8" />
                 <div className="space-y-2">
-           <h3 className="text-white font-semibold text-xl">500+ Companies</h3>
-           <p className="text-white/70">Access opportunities from top-tier companies</p>
-    </div>
+                  <h3 className="text-white font-semibold text-xl">500+ Companies</h3>
+                  <p className="text-white/70">Access opportunities from top-tier companies</p>
+                </div>
 
               </div>
             </div>
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 transform hover:scale-105 transition-transform duration-300 border border-white/10 shadow-lg">
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 transform hover:scale-105 transition-transform duration-300 border border-white/10 shadow-lg">
               <div className="flex space-x-4">
                 <IoMdCheckmarkCircleOutline className="h-8 w-8" />
                 <div className="space-y-2">
-             <h3 className="text-white font-semibold text-xl">Verified Campus Placements</h3>
-             <p className="text-white/70">Secure your future with trusted companies</p>
-          </div>
+                  <h3 className="text-white font-semibold text-xl">Verified Campus Placements</h3>
+                  <p className="text-white/70">Secure your future with trusted companies</p>
+                </div>
               </div>
             </div>
           </div>
@@ -171,8 +174,8 @@ const handleOtpVerification = async () => {
                 <>
                   <input type="text" placeholder="Enter OTP" value={otp} onChange={(e) => setOtp(e.target.value)} className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 mt-4" />
                   <button onClick={handleOtpVerification} className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 mt-4">
-  Verify OTP
-</button>
+                    Verify OTP
+                  </button>
 
                 </>
               )}

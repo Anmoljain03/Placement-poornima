@@ -16,14 +16,14 @@ const Notifications = () => {
         setLoading(false);
         return;
       }
-  
+
       try {
-        const response = await fetch(`http://localhost:5000/api/notifications/${userId}`);
+        const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/notifications/${userId}`);
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.message || "Failed to fetch notifications");
         }
-  
+
         const data = await response.json();
         console.log("✅ Notifications Fetched:", data);
         setNotifications(data);
@@ -34,10 +34,10 @@ const Notifications = () => {
         setLoading(false);
       }
     };
-  
+
     fetchNotifications();
   }, []);
-  
+
 
   const filteredNotifications = notifications.filter((n) =>
     n.message.toLowerCase().includes(search.toLowerCase())
@@ -45,7 +45,7 @@ const Notifications = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10 px-4">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}

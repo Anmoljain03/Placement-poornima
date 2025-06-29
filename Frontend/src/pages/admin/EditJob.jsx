@@ -26,7 +26,7 @@ const EditJob = () => {
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/jobs/${jobId}`);
+        const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/jobs/${jobId}`);
         const data = await response.json();
         if (response.ok) {
           setJob(data);
@@ -73,7 +73,7 @@ const EditJob = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/jobs/edit/${jobId}`, {
+      const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/jobs/edit/${jobId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -48,7 +48,7 @@ const AddJob = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    
+
     formData.append("jobTitle", job.jobTitle);
     formData.append("companyName", job.companyName);
     formData.append("jobLocation", job.jobLocation);
@@ -58,32 +58,33 @@ const AddJob = () => {
     formData.append("duration", job.duration);
     formData.append("department", job.department);
     formData.append("deadline", job.deadline);
-  
+
     if (selectedFile) {
       formData.append("jobDescriptionFile", selectedFile);
     }
-  
+
     try {
-      const response = await fetch("http://localhost:5000/api/jobs", {
+      const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/jobs`, {
         method: "POST",
         body: formData,
         headers: {
-          Authorization: adminToken, // Don't set "Content-Type" manually
+          Authorization: adminToken, // ✅ No need to set "Content-Type" when using FormData
         },
       });
-  
+
+
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.error || "Failed to post job");
       }
-  
+
       showSuccessToast("Job posted successfully!");
     } catch (error) {
       console.error("Error posting job:", error);
     }
   };
-  
-  
+
+
 
   return (
     <div className="flex min-h-screen bg-[#1F2937]">

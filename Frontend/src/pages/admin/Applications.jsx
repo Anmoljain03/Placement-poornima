@@ -8,7 +8,7 @@ const Applications = () => {
   useEffect(() => {
     const fetchApplications = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/admin/applications");
+        const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/admin/applications`);
         const data = await response.json();
         setApplications(data.applications || []);
       } catch (error) {
@@ -58,7 +58,8 @@ const Applications = () => {
                               <strong>{key}:</strong>{" "}
                               {key.toLowerCase() === "resume" ? (
                                 <a
-                                  href={`http://localhost:5000${value}`}
+                                  href={`${import.meta.env.VITE_LIVE_URL}${value}`}
+
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-blue-400 underline"

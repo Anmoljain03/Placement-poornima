@@ -17,9 +17,12 @@ const ProfileHeader = () => {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const response = await fetch("http://localhost:5000/api/auth/profile", {
+        const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/auth/profile`, {
           method: "GET",
-          headers: { "Content-Type": "application/json", Authorization: token },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
         });
 
         if (response.ok) {

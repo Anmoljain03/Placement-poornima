@@ -12,7 +12,6 @@ const PlacementTracking = require("../models/PlacementTracking");
 const { io } = require("../server");
 const nodemailer = require("nodemailer");
 
-
 //admin credentials
 const ADMIN_CREDENTIALS = {
     email: "admin123@login.com",

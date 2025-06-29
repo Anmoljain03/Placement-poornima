@@ -38,7 +38,7 @@ const Register = ({ setAuthState }) => {
   const handleSubmit = async (values, { setSubmitting }) => {
     console.log("Submitting Form Data:", values);
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/register", values);
+      const response = await axios.post(`${import.meta.env.VITE_LIVE_URL}/api/auth/register`, values);
       localStorage.setItem("token", response.data.token);
 
       const userData = {

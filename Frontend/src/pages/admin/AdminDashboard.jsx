@@ -21,28 +21,29 @@ const AdminDashboard = () => {
           navigate("/admin/login");
           return;
         }
-    
-        const response = await fetch("http://localhost:5000/api/admin/dashboard", {
+
+        const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/admin/dashboard`, {
           headers: { Authorization: `${token}` },
         });
-    
+
         if (!response.ok) throw new Error("Failed to fetch dashboard stats");
-    
+
         const data = await response.json();
-        console.log("Dashboard Stats:", data); 
+        console.log("Dashboard Stats:", data);
         setStats(data);
       } catch (error) {
         console.error("Error fetching dashboard stats:", error);
       }
     };
-    
+
     const fetchJobs = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/jobs");
+        const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/jobs`);
         if (!response.ok) throw new Error("Failed to fetch jobs");
         const data = await response.json();
         setJobs(data);
-      } catch (error) {
+      }
+      catch (error) {
         console.error("Error fetching jobs:", error);
       } finally {
         setLoading(false);
@@ -61,10 +62,14 @@ const AdminDashboard = () => {
         return;
       }
 
-      const response = await fetch(`http://localhost:5000/api/jobs/${jobId}`, {
+      const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/jobs/${jobId}`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json", Authorization: `${token}` },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
       });
+
 
       if (!response.ok) throw new Error("Failed to delete job");
       showSuccessToast("Job deleted successfully!");
@@ -111,8 +116,8 @@ const AdminDashboard = () => {
         {/* Dashboard Stats with Gradient Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
           {[{ title: "Total Users", value: stats.totalUsers, color: "from-blue-500 to-indigo-600" },
-            { title: "Total Jobs", value: stats.totalJobs, color: "from-green-500 to-emerald-600" },
-            { title: "Total Applications", value: stats.totalApplications, color: "from-yellow-500 to-orange-600" },
+          { title: "Total Jobs", value: stats.totalJobs, color: "from-green-500 to-emerald-600" },
+          { title: "Total Applications", value: stats.totalApplications, color: "from-yellow-500 to-orange-600" },
           ].map((item, index) => (
             <motion.div
               key={index}

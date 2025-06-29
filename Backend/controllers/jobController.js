@@ -7,7 +7,6 @@ const Interview = require("../models/interviewModel");
 const moment = require("moment");
 const nodemailer = require("nodemailer");
 
-
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");

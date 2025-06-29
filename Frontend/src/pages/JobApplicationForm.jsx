@@ -14,12 +14,12 @@ const JobApplicationForm = () => {
 
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: "smooth" });
-        
+
         const fetchFormAndJobDetails = async () => {
             try {
                 const [formResponse, jobResponse] = await Promise.all([
-                    fetch(`http://localhost:5000/api/admin/get-job-form/${jobId}`),
-                    fetch(`http://localhost:5000/api/jobs/${jobId}`)
+                    fetch(`${import.meta.env.VITE_LIVE_URL}/api/admin/get-job-form/${jobId}`),
+                    fetch(`${import.meta.env.VITE_LIVE_URL}/api/jobs/${jobId}`)
                 ]);
 
                 if (!formResponse.ok) throw new Error("Failed to load form");
@@ -29,7 +29,7 @@ const JobApplicationForm = () => {
                 const jobData = await jobResponse.json();
                 setFormData(formData);
                 setJob(jobData);
-                
+
                 const initialValues = {};
                 formData.fields.forEach((field) => {
                     initialValues[field.label] = "";
@@ -75,7 +75,7 @@ const JobApplicationForm = () => {
         };
 
         try {
-            const response = await fetch("http://localhost:5000/api/admin/submit-job-application", {
+            const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/admin/submit-job-application`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -83,6 +83,7 @@ const JobApplicationForm = () => {
                 },
                 body: JSON.stringify(applicationData),
             });
+
 
             if (!response.ok) throw new Error("Submission failed");
             showSuccessToast("Application submitted successfully!");
@@ -97,13 +98,13 @@ const JobApplicationForm = () => {
     if (!formData) return <h2 className="text-gray-400 text-center">No form found.</h2>;
 
     return (
-        <motion.div 
-            initial={{ opacity: 0, y: 30 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ duration: 0.8, ease: "easeOut" }} 
+        <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
             className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-900 to-black p-6"
         >
-            <motion.div 
+            <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
@@ -115,8 +116,8 @@ const JobApplicationForm = () => {
                     className="space-y-5"
                 >
                     {formData.fields.map((field, index) => (
-                        <motion.div 
-                            key={field._id} 
+                        <motion.div
+                            key={field._id}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.4, delay: index * 0.1 }}

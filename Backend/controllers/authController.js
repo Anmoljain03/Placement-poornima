@@ -11,7 +11,6 @@ const path = require("path");
 const express = require("express");
 const app = express();
 const Contact = require("../models/contact");
-
 // mail username and password
 const transporter = nodemailer.createTransport({
     service: "gmail",

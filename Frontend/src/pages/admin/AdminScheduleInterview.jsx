@@ -20,7 +20,7 @@ const AdminScheduleInterview = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/jobs");
+const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/jobs`);
         const data = await response.json();
         setJobs(data);
       } catch (error) {
@@ -63,7 +63,7 @@ const AdminScheduleInterview = () => {
         formData.append("file", file);
       }
 
-      const response = await fetch("http://localhost:5000/api/admin/schedule-interview", {
+      const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/admin/schedule-interview`, {
         method: "POST",
         body: formData,
       });

@@ -4,7 +4,7 @@ import { FaUserCircle, FaBell } from "react-icons/fa"; // Add FaBell for notific
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { showSuccessToast } from "../utils/toast";
 
-const Navbar = ({ isAuthenticated, setAuthState, isLoggedIn  }) => {
+const Navbar = ({ isAuthenticated, setAuthState, isLoggedIn }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isAuth, setIsAuth] = useState(isAuthenticated);
@@ -40,11 +40,11 @@ const Navbar = ({ isAuthenticated, setAuthState, isLoggedIn  }) => {
           return;
         }
 
-        const response = await fetch("http://localhost:5000/api/auth/profile", {
+        const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/auth/profile`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: token, // Token without 'Bearer'
+            Authorization: token,
           },
         });
 
@@ -111,19 +111,19 @@ const Navbar = ({ isAuthenticated, setAuthState, isLoggedIn  }) => {
         </div>
 
         {/* Hamburger Button - Only on small screens */}
-<div className="md:hidden">
-  <button onClick={() => setMenuOpen(!menuOpen)} className="text-[#1A365D] focus:outline-none">
-    {menuOpen ? (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    ) : (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-      </svg>
-    )}
-  </button>
-</div>
+        <div className="md:hidden">
+          <button onClick={() => setMenuOpen(!menuOpen)} className="text-[#1A365D] focus:outline-none">
+            {menuOpen ? (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
+        </div>
 
 
         {/* Navigation Links */}
@@ -134,8 +134,8 @@ const Navbar = ({ isAuthenticated, setAuthState, isLoggedIn  }) => {
                 <Link
                   to={path}
                   className={`px-4 py-2 rounded-lg text-sm font-semibold transition duration-300 ${location.pathname === path
-                      ? "bg-[#1A365D] text-white shadow-md"
-                      : "text-gray-600 hover:text-gray-900"
+                    ? "bg-[#1A365D] text-white shadow-md"
+                    : "text-gray-600 hover:text-gray-900"
                     }`}
                 >
                   {name}
@@ -181,8 +181,8 @@ const Navbar = ({ isAuthenticated, setAuthState, isLoggedIn  }) => {
             <Link
               to="/statistics"
               className={`px-4 py-2 rounded-lg text-sm font-semibold transition duration-300 ${location.pathname === "/statistics"
-                  ? "bg-[#1A365D] text-white shadow-md"
-                  : "text-gray-600 hover:text-gray-900"
+                ? "bg-[#1A365D] text-white shadow-md"
+                : "text-gray-600 hover:text-gray-900"
                 }`}
             >
               Statistics
@@ -194,8 +194,8 @@ const Navbar = ({ isAuthenticated, setAuthState, isLoggedIn  }) => {
             <Link
               to="/contact"
               className={`px-4 py-2 rounded-lg text-sm font-semibold transition duration-300 ${location.pathname === "/contact"
-                  ? "bg-[#1A365D] text-white shadow-md"
-                  : "text-gray-600 hover:text-gray-900"
+                ? "bg-[#1A365D] text-white shadow-md"
+                : "text-gray-600 hover:text-gray-900"
                 }`}
             >
               Contact
@@ -271,86 +271,86 @@ const Navbar = ({ isAuthenticated, setAuthState, isLoggedIn  }) => {
         </ul>
 
 
-{/* Mobile Menu - Only visible when menuOpen is true */}
-{menuOpen && (
-  <div className="md:hidden absolute top-16 left-0 w-full bg-white shadow-md z-50 p-4 space-y-2">
-    {[{ name: "Home", path: "/" }, { name: "About", path: "/about" }, { name: "Statistics", path: "/statistics" }, { name: "Contact", path: "/contact" }].map(
-      ({ name, path }) => (
-        <Link
-          key={path}
-          to={path}
-          onClick={() => setMenuOpen(false)}
-          className={`block px-4 py-2 rounded-md text-sm font-semibold transition duration-300 ${location.pathname === path
-            ? "bg-[#1A365D] text-white"
-            : "text-gray-700 hover:bg-gray-100"
-            }`}
-        >
-          {name}
-        </Link>
-      )
-    )}
+        {/* Mobile Menu - Only visible when menuOpen is true */}
+        {menuOpen && (
+          <div className="md:hidden absolute top-16 left-0 w-full bg-white shadow-md z-50 p-4 space-y-2">
+            {[{ name: "Home", path: "/" }, { name: "About", path: "/about" }, { name: "Statistics", path: "/statistics" }, { name: "Contact", path: "/contact" }].map(
+              ({ name, path }) => (
+                <Link
+                  key={path}
+                  to={path}
+                  onClick={() => setMenuOpen(false)}
+                  className={`block px-4 py-2 rounded-md text-sm font-semibold transition duration-300 ${location.pathname === path
+                    ? "bg-[#1A365D] text-white"
+                    : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                >
+                  {name}
+                </Link>
+              )
+            )}
 
-    <div>
-      <p className="text-sm font-semibold px-4 py-2 text-gray-700">Jobs</p>
-      {[{ name: "Search Jobs", path: "/jobs" }, { name: "Saved Jobs", path: "/saved-jobs" }, { name: "My Applications", path: "/placement-tracking" }].map(
-        ({ name, path }) => (
-          <Link
-            key={path}
-            to={path}
-            onClick={() => setMenuOpen(false)}
-            className="block px-6 py-1 text-sm text-gray-700 hover:bg-gray-100"
-          >
-            {name}
-          </Link>
-        )
-      )}
-    </div>
+            <div>
+              <p className="text-sm font-semibold px-4 py-2 text-gray-700">Jobs</p>
+              {[{ name: "Search Jobs", path: "/jobs" }, { name: "Saved Jobs", path: "/saved-jobs" }, { name: "My Applications", path: "/placement-tracking" }].map(
+                ({ name, path }) => (
+                  <Link
+                    key={path}
+                    to={path}
+                    onClick={() => setMenuOpen(false)}
+                    className="block px-6 py-1 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    {name}
+                  </Link>
+                )
+              )}
+            </div>
 
-    {isAuth ? (
-      <>
-        <Link
-          to="/profile"
-          onClick={() => setMenuOpen(false)}
-          className=" px-4 py-2 text-sm font-semibold text-[#1A365D] hover:bg-gray-100"
-        >
-          Profile
-        </Link>
-        <button
-          onClick={() => {
-            handleLogout();
-            setMenuOpen(false);
-          }}
-          className=" w-full text-left px-4 py-2 text-sm font-semibold text-red-600 hover:bg-gray-100"
-        >
-          Logout
-        </button>
-        <button
-          onClick={() => {
-            navigate("/notifications");
-            setMenuOpen(false);
-          }}
-          className=" w-full text-left px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-        >
-          <FaBell />
-          Notifications
-          {notificationCount > 0 && (
-            <span className="ml-auto bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-              {notificationCount}
-            </span>
-          )}
-        </button>
-      </>
-    ) : (
-      <Link
-        to="/login"
-        onClick={() => setMenuOpen(false)}
-        className="block px-4 py-2 text-sm font-semibold bg-[#1A365D] text-white rounded-md hover:bg-gray-900 text-center"
-      >
-        Login
-      </Link>
-    )}
-  </div>
-)}
+            {isAuth ? (
+              <>
+                <Link
+                  to="/profile"
+                  onClick={() => setMenuOpen(false)}
+                  className=" px-4 py-2 text-sm font-semibold text-[#1A365D] hover:bg-gray-100"
+                >
+                  Profile
+                </Link>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setMenuOpen(false);
+                  }}
+                  className=" w-full text-left px-4 py-2 text-sm font-semibold text-red-600 hover:bg-gray-100"
+                >
+                  Logout
+                </button>
+                <button
+                  onClick={() => {
+                    navigate("/notifications");
+                    setMenuOpen(false);
+                  }}
+                  className=" w-full text-left px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                >
+                  <FaBell />
+                  Notifications
+                  {notificationCount > 0 && (
+                    <span className="ml-auto bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                      {notificationCount}
+                    </span>
+                  )}
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="block px-4 py-2 text-sm font-semibold bg-[#1A365D] text-white rounded-md hover:bg-gray-900 text-center"
+              >
+                Login
+              </Link>
+            )}
+          </div>
+        )}
 
 
 

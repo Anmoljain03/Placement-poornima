@@ -26,7 +26,7 @@ const PlacementTracking = () => {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      const response = await fetch("http://localhost:5000/api/auth/profile", {
+      const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/auth/profile`, {
         method: "GET",
         headers: { "Content-Type": "application/json", Authorization: token },
       });
@@ -57,14 +57,14 @@ const PlacementTracking = () => {
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
-  
+
     if (!userId) {
       console.warn("No User ID found, skipping data fetch.");
       return;
     }
-  
+
     setLoadingPlacement(true);
-  
+
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -72,28 +72,28 @@ const PlacementTracking = () => {
           console.warn("No token found, skipping data fetch.");
           return;
         }
-  
+
         // ✅ Fetch Applications
         const applicationsRes = await fetch(
-          `http://localhost:5000/api/admin/get-user-applications/${userId}`,
+          `${import.meta.env.VITE_LIVE_URL}/api/admin/get-user-applications/${userId}`,
           {
             headers: { "Content-Type": "application/json", Authorization: token },
           }
         );
-  
+
         if (!applicationsRes.ok) {
           throw new Error("Failed to fetch applications data");
         }
-  
+
         const applicationsData = await applicationsRes.json();
         setApplications(applicationsData.applications);
         setApplicationsCount(applicationsData.applications.length);
-  
+
         console.log("Applications API Response:", applicationsData);
-  
+
         // ✅ Fetch Placement Tracking
         const placementRes = await fetch(
-          `http://localhost:5000/api/jobs/placement-status/${userId}`,
+          `${import.meta.env.VITE_LIVE_URL}/api/jobs/placement-status/${userId}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -101,25 +101,25 @@ const PlacementTracking = () => {
             },
           }
         );
-  
+
         if (!placementRes.ok) {
           throw new Error(
             `Placement Tracking Fetch Error: ${placementRes.status} ${placementRes.statusText}`
           );
         }
-  
+
         const placementData = await placementRes.json();
         console.log("Placement Tracking Data Fetched:", placementData);
-  
+
         // ✅ Ensure placementData is an array
         if (!Array.isArray(placementData)) {
           console.error("Invalid placementData format:", placementData);
           return;
         }
-  
+
         // ✅ Set Data Without Duplication
         setPlacementStatus(placementData);
-  
+
         // ✅ Store in Local Storage
         localStorage.setItem("placementStatus", JSON.stringify(placementData));
       } catch (error) {
@@ -128,7 +128,7 @@ const PlacementTracking = () => {
         setLoadingPlacement(false);
       }
     };
-  
+
     fetchData();
   }, []); // ✅ Runs only once
 
@@ -141,70 +141,70 @@ const PlacementTracking = () => {
         </p>
       </div>
 
-     
-      
-<div className="px-8 py-8 w-full lg:w-3/4 mx-auto bg-gradient-to-r from-gray-100 to-gray-200 shadow-2xl rounded-lg mt-10 mb-10 overflow-hidden">
-  {/* Header Section */}
-  <motion.div
-    className="flex items-center justify-start mb-8"
-    initial={{ opacity: 0, x: -30 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ duration: 0.7 }}
-  >
-    <FaBriefcase size={32} className="text-[#1a365d]" />
-    <h2 className="ml-4 text-3xl font-bold text-gray-800 tracking-wide">Placement Tracking Status</h2>
-  </motion.div>
 
-  {/* Table Section */}
-  <motion.div
-    className="overflow-x-auto w-full"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ duration: 0.8, delay: 0.3 }}
-  >
-    {placementStatus && placementStatus.length > 0 ? (
-      <div className="overflow-x-auto max-w-full">
-        <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-md table-fixed">
-          <thead className="bg-gradient-to-r from-[#243b53] to-[#486581] text-white">
-            <tr>
-              <th className="py-3 px-6 text-left text-lg font-semibold">Company</th>
-              <th className="py-3 px-6 text-left text-lg font-semibold">Job Title</th>
-              <th className="py-3 px-6 text-left text-lg font-semibold">Applied Date</th>
-              <th className="py-3 px-6 text-center text-lg font-semibold">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {placementStatus.map((job, index) => (
-              <motion.tr
-                key={index}
-                className="hover:bg-gray-50 transition-all duration-300"
-                whileHover={{ scale: 1.02 }}
-              >
-                <td className="py-4 px-6 text-gray-800">{job.companyName}</td>
-                <td className="py-4 px-6 text-gray-800">{job.jobTitle}</td>
-                <td className="py-4 px-6 text-gray-800">{new Date(job.createdAt).toLocaleDateString()}</td> {/* Applied Date */}
-                <td className="py-4 px-6 text-center">
-                  <motion.p
-                    className={`inline-block font-bold text-md px-4 py-2 rounded-md 
-                      ${job.status === 'Completed' ? 'bg-green-100 text-green-600' : 
-                      job.status === 'Interview Scheduled' ? 'bg-blue-100 text-blue-600' : 
-                      'bg-orange-100 text-orange-600'}`}
-                    whileHover={{ scale: 1.1 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {job.status}
-                  </motion.p>
-                </td>
-              </motion.tr>
-            ))}
-          </tbody>
-        </table>
+
+      <div className="px-8 py-8 w-full lg:w-3/4 mx-auto bg-gradient-to-r from-gray-100 to-gray-200 shadow-2xl rounded-lg mt-10 mb-10 overflow-hidden">
+        {/* Header Section */}
+        <motion.div
+          className="flex items-center justify-start mb-8"
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7 }}
+        >
+          <FaBriefcase size={32} className="text-[#1a365d]" />
+          <h2 className="ml-4 text-3xl font-bold text-gray-800 tracking-wide">Placement Tracking Status</h2>
+        </motion.div>
+
+        {/* Table Section */}
+        <motion.div
+          className="overflow-x-auto w-full"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+        >
+          {placementStatus && placementStatus.length > 0 ? (
+            <div className="overflow-x-auto max-w-full">
+              <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-md table-fixed">
+                <thead className="bg-gradient-to-r from-[#243b53] to-[#486581] text-white">
+                  <tr>
+                    <th className="py-3 px-6 text-left text-lg font-semibold">Company</th>
+                    <th className="py-3 px-6 text-left text-lg font-semibold">Job Title</th>
+                    <th className="py-3 px-6 text-left text-lg font-semibold">Applied Date</th>
+                    <th className="py-3 px-6 text-center text-lg font-semibold">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {placementStatus.map((job, index) => (
+                    <motion.tr
+                      key={index}
+                      className="hover:bg-gray-50 transition-all duration-300"
+                      whileHover={{ scale: 1.02 }}
+                    >
+                      <td className="py-4 px-6 text-gray-800">{job.companyName}</td>
+                      <td className="py-4 px-6 text-gray-800">{job.jobTitle}</td>
+                      <td className="py-4 px-6 text-gray-800">{new Date(job.createdAt).toLocaleDateString()}</td> {/* Applied Date */}
+                      <td className="py-4 px-6 text-center">
+                        <motion.p
+                          className={`inline-block font-bold text-md px-4 py-2 rounded-md 
+                      ${job.status === 'Completed' ? 'bg-green-100 text-green-600' :
+                              job.status === 'Interview Scheduled' ? 'bg-blue-100 text-blue-600' :
+                                'bg-orange-100 text-orange-600'}`}
+                          whileHover={{ scale: 1.1 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          {job.status}
+                        </motion.p>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="text-center text-gray-500 mt-5 text-lg font-medium">No placement records found.</p>
+          )}
+        </motion.div>
       </div>
-    ) : (
-      <p className="text-center text-gray-500 mt-5 text-lg font-medium">No placement records found.</p>
-    )}
-  </motion.div>
-</div>
 
     </div>
   );

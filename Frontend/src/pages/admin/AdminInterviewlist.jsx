@@ -6,7 +6,7 @@ const AdminScheduledInterviews = () => {
     const [interviews, setInterviews] = useState([]);
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/admin/scheduled-interviews")
+fetch(`${import.meta.env.VITE_LIVE_URL}/api/admin/scheduled-interviews`)
             .then(response => response.json())
             .then(data => setInterviews(data))
             .catch(error => console.error("Error fetching interviews:", error));

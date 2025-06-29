@@ -13,11 +13,14 @@ const AdminLogin = ({ setAdminAuth }) => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/admin/login", {
+      const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/admin/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ email, password }),
       });
+
 
       const data = await response.json();
 
@@ -85,9 +88,8 @@ const AdminLogin = ({ setAdminAuth }) => {
 
         <button
           type="submit"
-          className={`w-full p-3 rounded-lg text-white font-semibold transition-all ${
-            loading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-          }`}
+          className={`w-full p-3 rounded-lg text-white font-semibold transition-all ${loading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+            }`}
           disabled={loading}
         >
           {loading ? "Logging in..." : "Login"}

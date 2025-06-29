@@ -13,7 +13,7 @@ const DeleteJob = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/jobs/delete/${jobId}`, {
+      const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/jobs/delete/${jobId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

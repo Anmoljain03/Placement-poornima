@@ -13,11 +13,12 @@ const AdminCreateForm = () => {
     useEffect(() => {
         const fetchJobs = async () => {
             try {
-                const response = await fetch("http://localhost:5000/api/jobs");
-                if (!response.ok) throw new Error("Failed to fetch jobs");
-                const data = await response.json();
-                setJobs(data);
-            } catch (error) {
+  const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/jobs`);
+  if (!response.ok) throw new Error("Failed to fetch jobs");
+  const data = await response.json();
+  setJobs(data);
+}
+catch (error) {
                 console.error("Error fetching jobs:", error);
             }
         };
@@ -61,7 +62,7 @@ const AdminCreateForm = () => {
         const jobFormData = { jobId: selectedJob, fields: validFields };
 
         try {
-            const response = await fetch("http://localhost:5000/api/admin/create-job-form", {
+            const response = await fetch(`${import.meta.env.VITE_LIVE_URL}/api/admin/create-job-form`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(jobFormData)
