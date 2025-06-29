@@ -40,9 +40,13 @@ app.use(morgan("dev"));
 app.use(helmet());
 app.use(
   cors({
-    origin: "http://localhost:5173", // Allow frontend to access backend
+    origin: [
+      "http://localhost:5173", // for local dev
+      "https://placement-poornima-frontend1.onrender.com", // for live site
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true, // only if you're using cookies
   })
 );
 // Rate Limiting
