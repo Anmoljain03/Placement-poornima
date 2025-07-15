@@ -9,59 +9,68 @@ const path = require("path");
 const http = require("http");
 const { Server } = require("socket.io");
 
+// Load .env
 dotenv.config();
 
-// Initialize Express
+// Create Express app & HTTP server
 const app = express();
-const server = http.createServer(app); 
+const server = http.createServer(app);
 
-// Initialize Socket.IO before routes
+// ✅ Correct & strict CORS config
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://placement-poornima-frontend1.onrender.com"
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
+// ✅ Socket.IO with same CORS config
 const io = new Server(server, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
+    origin: allowedOrigins,
+    methods: ["GET", "POST"]
+  }
 });
 
+// ✅ Make `io` global if needed
 global.io = io;
 
 io.on("connection", (socket) => {
-  console.log(` A user connected: ${socket.id}`);
+  console.log(`Socket connected: ${socket.id}`);
 
   socket.on("disconnect", () => {
-    console.log(` A user disconnected: ${socket.id}`);
+    console.log(`Socket disconnected: ${socket.id}`);
   });
 });
 
-// Middleware
+// ✅ Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 app.use(helmet());
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173", // for local dev
-      "https://placement-poornima-frontend1.onrender.com", 
-      "https://placement-poornima-frontend1.onrender.com/admin/login"
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true, // only if you're using cookies
-  })
-);
-// Rate Limiting
-const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 1000, message: "Too many requests from this IP, please try again later." });
-app.use(limiter);
 
-// Connect to MongoDB
+// // ✅ Rate limit
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, 
+//   max: 1000,
+//   message: "Too many requests from this IP, please try again later."
+// });
+// app.use(limiter);
+
+// ✅ MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected Successfully"))
-  .catch((error) => {
-    console.error("MongoDB Connection Error:", error.message);
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch(err => {
+    console.error("❌ MongoDB connection error:", err.message);
     process.exit(1);
   });
 
+// ✅ Routes
 const notificationRoutes = require("./routes/notificationRoutes");
 const authRoutes = require("./routes/authRoutes");
 const jobRoutes = require("./routes/jobRoutes");
@@ -73,12 +82,16 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// ✅ Simple test route
 app.get("/", (req, res) => {
-  res.send("API is running!");
+  res.send("API is running...");
 });
 
-// Start Server
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// ✅ Handle preflight requests (important!)
+app.options("*", cors());
 
-module.exports = { server };
+// ✅ Start server
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
