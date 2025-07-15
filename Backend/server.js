@@ -42,7 +42,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173", // for local dev
-      "https://placement-poornima-frontend1.onrender.com", // for live site
+      "https://placement-poornima-frontend1.onrender.com", 
+      "https://placement-poornima-frontend1.onrender.com/admin/login"
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
